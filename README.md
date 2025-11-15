@@ -1,0 +1,2 @@
+# SIMBI
+AI Study Buddy
