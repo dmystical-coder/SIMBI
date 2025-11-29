@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -45,19 +46,19 @@ export default function Header() {
               Simbi helps you plan, stay motivated and learn effectively with a
               touch of personality
             </p>
-            <div className="space-y-4 mt-2 md:mt-10 lg:mt-12">
-              <button
-                type="button"
-                className="w-[233px] lg:w-[444px] bg-[#7A5FFF] text-white py-3"
+            <div className="space-y-4 mt-2 md:mt-10 lg:mt-12 flex flex-col items-center md:items-start">
+              <Link
+                href="/get-started"
+                className="w-[233px] lg:w-[444px] bg-[#7A5FFF] text-white py-3 text-center block"
               >
                 Get Started
-              </button>
-              <button
-                type="button"
-                className="w-[233px] lg:w-[444px] border border-[#7A5FFF] text-[#7A5FFF] py-3 rounded-lg"
+              </Link>
+              <Link
+                href="/sign-in"
+                className="w-[233px] lg:w-[444px] border border-[#7A5FFF] text-[#7A5FFF] py-3 rounded-lg text-center block"
               >
                 Have an Account{" "}
-              </button>{" "}
+              </Link>{" "}
             </div>
           </div>
         </div>

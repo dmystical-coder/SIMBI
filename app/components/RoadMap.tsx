@@ -1,5 +1,5 @@
-import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { RoadMaps } from "../app-constants";
 
 export default function RoadMap() {
@@ -13,12 +13,15 @@ export default function RoadMap() {
           alt="simbi quote"
           className="w-[69px] h-[63px] md:w-40 md:h-[140px] lg:w-[216px] lg:h-[199px]"
         />
-        <button
-          type="button"
-          className="w-[80vw] lg:w-[1089px] -mt-1 md:-mt-6 lg:-mt-6 bg-[#7A5FFF] text-white lg:text-3xl py-1 lg:py-3"
+        <Link
+          href="/get-started"
+          className="block w-[95%] max-w-[700px] mt-5 lg:mt-8 mx-auto rounded-lg bg-[#8636EC] hover:bg-[#7A5FFF] active:bg-[#7A5FFF] transition-colors duration-150 text-white text-base md:text-lg lg:text-xl font-normal text-center py-4 lg:py-4 shadow-none outline-none border-none"
+          style={{
+            boxShadow: "0px 0px 0px 0px rgba(0,0,0,0)",
+          }}
         >
-          Get Started
-        </button>
+          Get Started in 60 Seconds
+        </Link>
       </div>
       <div>
         <Image

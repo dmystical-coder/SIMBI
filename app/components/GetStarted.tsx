@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 export default function GetStarted() {
@@ -11,18 +12,18 @@ export default function GetStarted() {
           Sign up and get acquainted with Simbi!
         </p>
         <div className="flex flex-wrap justify-center gap-3 lg:gap-4 mt-4 lg:mt-14">
-          <button
-            type="button"
+          <Link
+            href="/get-started"
             className="w-[219px] bg-[#7A5FFF] text-white py-3 rounded-lg"
           >
             Get Started
-          </button>
-          <button
-            type="button"
+          </Link>
+          <Link
+            href="/sign-in"
             className="w-[219px] border border-[#7A5FFF] text-[#7A5FFF] py-3 rounded-lg"
           >
             Have an Account{" "}
-          </button>{" "}
+          </Link>{" "}
         </div>
       </div>
     </section>
