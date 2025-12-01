@@ -46,5 +46,5 @@ export interface LoginResponse {
 export interface ApiError {
   status: string;
   message: string;
-  details?: any[];
+  details?: unknown[];
 }

@@ -88,7 +88,7 @@ export const register = async (data: RegisterData): Promise<AuthResponse> => {
 
       // Now login to get tokens
       try {
-        const loginResponse = await login({
+        await login({
           email: data.email,
           password: data.password,
         });

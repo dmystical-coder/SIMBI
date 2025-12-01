@@ -75,10 +75,11 @@ export default function SignInPage() {
 
       // Redirect to dashboard
       router.push("/dashboard");
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
       toaster.create({
         title: "Login Failed",
-        description: error.message || "Invalid email or password",
+        description: message || "Invalid email or password",
         type: "error",
       });
     } finally {
