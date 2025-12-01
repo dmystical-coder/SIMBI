@@ -1,65 +1,141 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Heading,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
+import Image from "next/image";
+import Link from "next/link";
+
+export default function WaitlistPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <Box minH="100vh" bg="brand.50" position="relative" overflow="hidden">
+      {/* Background decoration */}
+      <Box
+        position="absolute"
+        top="-20%"
+        right="-10%"
+        boxSize="600px"
+        bg="brand.200"
+        filter="blur(100px)"
+        opacity="0.5"
+        borderRadius="full"
+      />
+      <Box
+        position="absolute"
+        bottom="-20%"
+        left="-10%"
+        boxSize="500px"
+        bg="secondary.200"
+        filter="blur(100px)"
+        opacity="0.5"
+        borderRadius="full"
+      />
+
+      <Container maxW="container.xl" position="relative" zIndex={1}>
+        <Flex as="header" py={8} justify="space-between" align="center">
+          <Box position="relative" width="120px" height="40px">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/logo.svg"
+              alt="SIMBI"
+              fill
+              style={{ objectFit: "contain", objectPosition: "left" }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </Box>
+          <Button variant="ghost" colorPalette="brand" asChild>
+            <Link href="/auth/sign-in">Sign In</Link>
+          </Button>
+        </Flex>
+
+        <Flex
+          direction={{ base: "column", lg: "row" }}
+          align="center"
+          justify="space-between"
+          minH="calc(100vh - 140px)"
+          gap={12}
+          pb={20}
+        >
+          <VStack
+            align={{ base: "center", lg: "flex-start" }}
+            gap={6}
+            flex={1}
+            textAlign={{ base: "center", lg: "left" }}
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <Heading
+              size="6xl"
+              fontWeight="bold"
+              lineHeight="1.1"
+              letterSpacing="tight"
+              color="dark.950"
+            >
+              Meet
+              <Text as="span" color="brand.500">
+                {" "}
+                SIMBI!
+              </Text>{" "}
+              <br /> Your AI Study Buddy
+            </Heading>
+
+            <Text fontSize="xl" color="state.500" maxW="lg">
+              Get started with SIMBI today. Sign in to your account or create a
+              new one to begin your journey.
+            </Text>
+
+            <Stack
+              direction={{ base: "column", sm: "row" }}
+              gap={4}
+              w="full"
+              maxW="400px"
+            >
+              <Button
+                size="lg"
+                borderRadius="full"
+                bg="brand.500"
+                color="white"
+                _hover={{ bg: "brand.600" }}
+                flex={1}
+                asChild
+              >
+                <Link href="/auth/get-started">Get Started</Link>
+              </Button>
+              <Button
+                size="lg"
+                borderRadius="full"
+                variant="outline"
+                borderColor="brand.500"
+                color="brand.500"
+                _hover={{ bg: "brand.50" }}
+                flex={1}
+                asChild
+              >
+                <Link href="/auth/sign-in">Sign In</Link>
+              </Button>
+            </Stack>
+          </VStack>
+
+          <Box
+            flex={1}
+            position="relative"
+            display={{ base: "none", lg: "block" }}
+          >
+            <Box position="relative" width="600px" height="600px">
+              <Image
+                src="/simbi-waving.svg"
+                alt="SIMBI Waving"
+                fill
+                style={{ objectFit: "contain" }}
+                priority
+              />
+            </Box>
+          </Box>
+        </Flex>
+      </Container>
+    </Box>
   );
 }
