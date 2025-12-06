@@ -6,6 +6,7 @@ import {
   getCurrentUser,
   isAuthenticated,
   logout as logoutService,
+  refreshUserData,
 } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
@@ -16,6 +17,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
   refreshAuth: () => void;
+  refreshFromServer: () => Promise<void>;
+  hasCompletedPreAssessment: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,6 +61,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshFromServer = async () => {
+    if (isAuthenticated()) {
+      const updatedUser = await refreshUserData();
+      if (updatedUser) {
+        setUser(updatedUser);
+      }
+    }
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
@@ -65,6 +77,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     updateUser,
     refreshAuth,
+    refreshFromServer,
+    hasCompletedPreAssessment: user?.hasCompletedPreAssessment === true,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
