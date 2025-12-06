@@ -106,8 +106,8 @@ export default function GetStartedPage() {
         type: "success",
       });
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      // Redirect to pre-assessment page after successful registration
+      router.push("/pre-assessment");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       toaster.create({

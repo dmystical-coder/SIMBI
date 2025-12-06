@@ -6,7 +6,11 @@ import { Field } from "@chakra-ui/react";
 import Link from "next/link";
 import Image from "next/image";
 import { AuthLayout } from "@/components/ui/auth-layout";
-import { login } from "@/lib/auth";
+import {
+  login,
+  hasCompletedPreAssessment,
+  hasSkippedPreAssessment,
+} from "@/lib/auth";
 import { toaster } from "@/components/ui/toaster";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -73,8 +77,18 @@ export default function SignInPage() {
         type: "success",
       });
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      // Check if user has completed pre-assessment
+      const completedPreAssessment = hasCompletedPreAssessment();
+      const skippedPreAssessment = hasSkippedPreAssessment();
+
+      // Redirect based on pre-assessment status
+      // If they haven't completed it and haven't skipped it, redirect to pre-assessment
+      if (!completedPreAssessment && !skippedPreAssessment) {
+        router.push("/pre-assessment");
+      } else {
+        // Otherwise go to dashboard (whether they completed it or skipped it)
+        router.push("/dashboard");
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       toaster.create({
