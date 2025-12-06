@@ -4,276 +4,1043 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  Input,
+  Stack,
+  Container,
+} from "@chakra-ui/react";
+import { RadioGroup } from "@chakra-ui/react";
+import { submitPreAssessment, skipPreAssessment } from "@/lib/auth";
+import { toaster } from "@/components/ui/toaster";
+import { ProgressBar } from "@/components/ui/progress-bar";
 
-// Dummy user for testing
-const dummyUser = {
-  id: "dummy-id-123",
-  username: "dummyUser",
-  email: "dummy@example.com",
-  token: "dummy-token-123",
-};
-
-interface Question {
-  id: string;
-  type: "radio" | "multi";
-  question: string;
-  options?: string[];
+interface PreAssessmentData {
+  age?: string;
+  education?: string;
+  educationOther?: string;
+  usedStudyApp?: string;
+  appsUsed?: string;
+  hearAbout?: string[];
+  hearAboutOther?: string;
+  goals?: string[];
+  goalsOther?: string;
+  studyDuration?: string;
+  biggestStruggle?: string;
+  procrastinationFrequency?: string;
+  learningPreference?: string;
+  notesTaking?: string;
+  focusedTime?: string;
+  educationLevel?: string;
+  accountability?: string;
+  missedGoalReaction?: string;
+  learningGoals?: string;
+  checkInFrequency?: string;
 }
 
-const questions: Question[] = [
+const steps = [
   {
-    id: "q1",
-    type: "radio",
-    question: "How old are you?",
-    options: ["Under 13", "13-17", "18-22", "23-30", "30+"],
-  },
-  {
-    id: "q2",
-    type: "radio",
-    question: "What level of education are you in?",
-    options: [
-      "Secondary school(JSS/SSS)",
-      "University/Polytechnic",
-      "Vocational or Professional training",
-      "Just preparing for exams (e.g. JAMB, WAEC)",
-      "Other: -----",
+    id: 1,
+    title: "Pre Assessment Test",
+    mobileTitle: "Pre Assessment Test",
+    questions: [
+      {
+        id: "age",
+        question: "How old are you?",
+        type: "radio" as const,
+        options: ["Under 13", "13 -17", "18 -22", "23 -30", "30+"],
+      },
+      {
+        id: "education",
+        question: "What level of education are you currently in?",
+        type: "radio" as const,
+        options: [
+          "Secondary school (JSS/SSS)",
+          "University/Polythecnic",
+          "Vocational or Proffesional training",
+          "Just preparing for exams (e.g. JAMB, WAEC)",
+          "Other: _______",
+        ],
+      },
     ],
   },
   {
-    id: "q3",
-    type: "radio",
-    question: "Have you used a study assistant app before?",
-    options: ["Yes", "No"],
-  },
-  {
-    id: "q4",
-    type: "multi",
-    question: "How did you hear about SIMBI?",
-    options: [
-      "Social Media",
-      "A friend or classmate",
-      "My school or a teacher",
-      "Blog or article",
-      "Google search",
-      "Other:------",
+    id: 2,
+    title: "Pre Assessment Test",
+    mobileTitle: "Pre Assessment Test",
+    questions: [
+      {
+        id: "usedStudyApp",
+        question: "Have you used a study assistant app before?",
+        type: "radio" as const,
+        options: ["Yes", "No"],
+      },
+      {
+        id: "appsUsed",
+        question: "If yes, what app(s) did you use? (Optional):",
+        type: "text" as const,
+        placeholder: "____________",
+      },
+      {
+        id: "hearAbout",
+        question: "How did you hear about SIMBI?",
+        subtitle: "(Select one or more)",
+        type: "checkbox" as const,
+        options: [
+          "Social Media",
+          "A friend or classmate",
+          "My school or a teacher",
+          "Blog or article",
+          "Google search",
+          "Other: _______",
+        ],
+      },
     ],
   },
   {
-    id: "q5",
-    type: "multi",
-    question: "What do you hope to achieve with SIMBI?",
-    options: [
-      "Just exploring for now",
-      "Improve my grades",
-      "Build consistent study habits",
-      "Stay motivated",
-      "Feel less stressed about academics",
-      "Other:------",
+    id: 3,
+    title: "Pre Assessment Test",
+    mobileTitle: "Pre Assessment Test",
+    questions: [
+      {
+        id: "goals",
+        question: "What do you hope to achieve with SIMBI?",
+        subtitle: "(You can select more than one)",
+        type: "checkbox" as const,
+        options: [
+          "Just exploring for now",
+          "Improve my grades",
+          "Track my progress",
+          "Build consistent study habits",
+          "Stay motivated",
+          "Feel less stressed about academics",
+          "Other: _______",
+        ],
+      },
+    ],
+  },
+  {
+    id: 4,
+    title: "Learning Preferences",
+    mobileTitle: "Learning Preferences",
+    questions: [
+      {
+        id: "learningPreference",
+        question: "What's your preferred way of studying?",
+        type: "radio" as const,
+        options: [
+          "Watching videos",
+          "Reading articles",
+          "Practicing with quizzes",
+          "Group discussions",
+          "One-on-one explanations",
+        ],
+      },
+      {
+        id: "notesTaking",
+        question: "How do you usually take notes?",
+        type: "radio" as const,
+        options: [
+          "Handwritten notes",
+          "Typed notes",
+          "I don't take notes",
+          "I use voice memos",
+        ],
+      },
+      {
+        id: "focusedTime",
+        question: "What time do you feel most focused?",
+        type: "radio" as const,
+        options: ["Morning", "Afternoon", "Evening", "Late night"],
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: "Study Habits",
+    mobileTitle: "Study Habits",
+    questions: [
+      {
+        id: "studyDuration",
+        question: "How long can you study before losing focus?",
+        type: "radio" as const,
+        options: [
+          "Less than 20 minutes",
+          "20-40 minutes",
+          "1hour",
+          "Over one hour",
+        ],
+      },
+      {
+        id: "biggestStruggle",
+        question: "What is your biggest struggle when studying ?",
+        type: "radio" as const,
+        options: ["Lack of motivation", "Procrastination", "Time management"],
+      },
+      {
+        id: "procrastinationFrequency",
+        question: "How often do you procrastinate on studying?",
+        type: "radio" as const,
+        options: ["Rarely", "Sometimes", "Often", "All the time"],
+      },
+    ],
+  },
+  {
+    id: 6,
+    title: "Personality & Tone",
+    mobileTitle: "Personality & Tone",
+    questions: [
+      {
+        id: "educationLevel",
+        question: "What is your current level of education?",
+        type: "radio" as const,
+        options: ["University", "Secondary", "Primary", "Professional level"],
+      },
+      {
+        id: "accountability",
+        question:
+          "Would you like Simbi to hold you accountable? (e.g, with reminders or check-ins)?",
+        type: "radio" as const,
+        options: ["Yes", "No"],
+      },
+      {
+        id: "missedGoalReaction",
+        question: "How should SIMBI react if you miss a study goal?",
+        type: "radio" as const,
+        options: [
+          "Send a gentle reminder",
+          "Motivate with a funny message",
+          "Be firm and direct",
+          "Say nothing-I'll catch up on my own",
+        ],
+      },
+    ],
+  },
+  {
+    id: 7,
+    title: "Goal Setting",
+    mobileTitle: "Goal Setting",
+    questions: [
+      {
+        id: "learningGoals",
+        question: "What are your current learning goals?",
+        type: "text" as const,
+        placeholder: "Enter your current learning goals",
+      },
+      {
+        id: "checkInFrequency",
+        question:
+          "How often would you like SIMBI to check in on your progress?",
+        type: "radio" as const,
+        options: [
+          "Daily",
+          "Weekly",
+          "After each study session",
+          "Only when i ask",
+        ],
+      },
     ],
   },
 ];
 
-const QUESTIONS_PER_PAGE = 2;
-
 export default function PreAssessment() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { refreshAuth, refreshFromServer } = useAuth();
 
-  const [page, setPage] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string | string[]>>(
-    {}
-  );
+  const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState<PreAssessmentData>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const start = page * QUESTIONS_PER_PAGE;
-  const end = start + QUESTIONS_PER_PAGE;
-  const pageQuestions = questions.slice(start, end);
-  const isLastPage = end >= questions.length;
+  const currentStepData = steps[currentStep];
+  const isLastStep = currentStep === steps.length - 1;
 
-  // Dummy data for now
-  const token = (user as any)?.token ?? dummyUser.token;
-  const userId = user?.id ?? dummyUser.id;
-
-  const handleAnswerChange = (id: string, value: string) => {
+  const handleRadioChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({
       ...prev,
-      [id]: value,
+      [questionId]: value,
     }));
   };
 
-  const handleMultiSelectChange = (id: string, option: string, checked: boolean) => {
+  const handleCheckboxChange = (
+    questionId: string,
+    option: string,
+    checked: boolean
+  ) => {
     setAnswers((prev) => {
-      const prevArray: string[] = Array.isArray(prev[id]) ? (prev[id] as string[]) : [];
+      const currentValues =
+        (prev[questionId as keyof PreAssessmentData] as string[]) || [];
       return {
         ...prev,
-        [id]: checked
-          ? [...prevArray, option]
-          : prevArray.filter((x) => x !== option),
+        [questionId]: checked
+          ? [...currentValues, option]
+          : currentValues.filter((v) => v !== option),
       };
     });
   };
 
-  const handleNext = () => setPage((p) => p + 1);
-  const handlePrev = () => setPage((p) => p - 1);
+  const handleTextChange = (questionId: string, value: string) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [questionId]: value,
+    }));
+  };
 
-  const handleSubmit = async () => {
-    // Send answers to backend (dummy for now)
-    console.log("Submitting answers for user:", userId, answers);
-
-    try {
-      await fetch("/api/pre-assessment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ userId, answers }),
-      });
-
-      router.push("/congratulations");
-    console.log("It's working")
-    } catch (error) {
-      console.error("Failed to submit questionnaire:", error);
-      router.push("/pre-assessment")
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    try {
+      const formattedAnswers: Record<string, string> = {};
+
+      steps.forEach((step) => {
+        step.questions.forEach((q) => {
+          const answer = answers[q.id as keyof PreAssessmentData];
+          if (answer) {
+            formattedAnswers[q.question] = Array.isArray(answer)
+              ? answer.join(", ")
+              : String(answer);
+          }
+        });
+      });
+
+      await submitPreAssessment(formattedAnswers);
+
+      // Refresh user data from server to get updated hasCompletedPreAssessment flag
+      await refreshFromServer();
+
+      toaster.create({
+        title: "Assessment Submitted!",
+        description: "Thank you for completing the pre-assessment.",
+        type: "success",
+      });
+
+      router.push("/congratulations");
+    } catch (error) {
+      console.error("Failed to submit pre-assessment:", error);
+
+      toaster.create({
+        title: "Submission Failed",
+        description: "Unable to submit assessment. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSkip = () => {
+    skipPreAssessment();
+    refreshAuth();
+
+    toaster.create({
+      title: "Assessment Skipped",
+      description: "You can complete it later from your dashboard.",
+      type: "info",
+    });
+
+    router.push("/dashboard");
+  };
+
   return (
-    <Box w="100%">
+    <Box
+      minH="100vh"
+      bg="linear-gradient(135deg, #E9E8FF 0%, #F3F2FF 50%, #FFF4E6 100%)"
+      position="relative"
+      pb="100px"
+    >
+      {/* Logo - Desktop */}
+      <Box
+        display={{ base: "none", lg: "block" }}
+        position="absolute"
+        top="30px"
+        left="150px"
+      >
+        <Image
+          src="/simbi-logo.svg"
+          alt="SIMBI"
+          width={143}
+          height={54}
+          priority
+        />
+      </Box>
 
-        <Flex  py={8} justify="space-between" align="center">
-                  <Box position="relative" width="280px" height="48px" ml={{base:"32px", lg:"144px"}}>
-                    <Image
-                      src="/logo.svg"
-                      alt="SIMBI"
-                      fill
-                      style={{ objectFit: "contain", objectPosition: "left" }}
-                    />
-                  </Box>
-                </Flex>
+      {/* Logo - Mobile */}
+      <Box display={{ base: "block", lg: "none" }} pt="20px" px="20px">
+        <Image
+          src="/simbi-logo.svg"
+          alt="SIMBI"
+          width={91}
+          height={26}
+          priority
+        />
+      </Box>
 
-        <Flex as="section" flexDirection="column" align="center" justify="center" minH="100vh" p="1rem">
-
-            {/* Progress Bar */}
-            <Box w="30%" mt={{base:2, lg:4}} mb={{base:6, lg:12}} position="relative">
-                <div className="w-full h-2.5 bg-[#200B6A] rounded-lg border-2 border-black">
-                    <div className="h-full bg-[#957FFF] rounded-full relative"
-                    style={{
-                    width: `${((page + 1) / Math.ceil(questions.length / QUESTIONS_PER_PAGE)) * 100}%`,
-                    }}>
-
-                        <div className="absolute -right-3 top-1/2 -translate-y-1/2 rounded-full p-1">
-                            <Image src="/logo-purple.png" width={28} height={22} alt="simbi icon" />
-                        </div>
-                    </div>
-                </div>
-            </Box>
-
-      {/* Question Box */}
-            <Flex  as="section" w="70%" flexDirection={{base:"column", md:"row", lg:"row"}} 
-            justify="space-between" align="stretch" mb="128px"
-            className=" rounded-xl mb-32 shadow-[0px_16.66px_76.18px_rgba(149,127,255,0.53)]">
-
-                <Flex justify="center" align="center" p={{base:2, lg:16}} w={{base: "100%", lg: "40%"}}
-                borderRadius={12}
-                borderRightRadius={{base:"0", lg:"12"}} 
-                className="bg-[#7A5FFF]">
-                    <Text 
-                    as="h2" textAlign="center" 
-                    fontSize={{base:"18px", md:"24px", lg:"30px"}} 
-                    fontWeight={500}
-                    color="white">
-                        Pre Assessment Test
-                    </Text>
-                </Flex>
-
-                {/* Right Panel */}
-                <Flex flexDirection="column" p={{base:4, lg:12}} flex={1}
-                borderRadius={12}
-                borderLeftRadius={{base:"0", lg:"12"}}
-                fontSize={{base:"16px", md:"18px", lg:"20px"}} fontWeight="medium">
-
-                    {pageQuestions.map((q) => (
-                        <Box as="div" key={q.id} mb={20}>
-              <p className="font-medium mb-2">{q.question}</p>
-
-              {q.type === "radio" &&
-                q.options?.map((opt) => (
-                  <label key={opt} className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name={q.id}
-                      value={opt}
-                      checked={answers[q.id] === opt}
-                      onChange={() => handleAnswerChange(q.id, opt)}
-                      className="hidden"
-                    />
-                    <Box as="span"
-                    mr={4}
-                      className={`w-4 h-4 rounded-full flex items-center justify-center border-2 bg-white ${
-                        answers[q.id] === opt ? "ring-1 ring-[#957FFF]" : "ring-1 ring-gray-600 border-gray-600"
-                      }`}
-                    >
-                      {answers[q.id] === opt && (
-                        <span className="w-2 h-2 bg-[#957FFF] rounded-full"></span>
-                      )}
-                    </Box>
-                    <Box fontSize={{base:"12px", lg:"16px"}} fontWeight="400" mb={2}
-                    >{opt}</Box>
-                  </label>
-                ))}
-
-              {q.type === "multi" &&
-                q.options?.map((opt) => {
-                  const checked = Array.isArray(answers[q.id]) && (answers[q.id] as string[]).includes(opt);
-                  return (
-                    <label key={opt} className="flex items-center mb-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={(e) => handleMultiSelectChange(q.id, opt, e.target.checked)}
-                        className="hidden"
-                      />
-                    <Box as="span"
-                    mr={4}
-                        className={`w-4 h-4 rounded-full flex items-center justify-center border-2 bg-white ${
-                          checked ? "ring-1 ring-[#957FFF]" : "ring-1 ring-gray-600 border-gray-600"
-                        }`}
-                      >
-                        {checked && <span className="w-2 h-2 bg-[#957FFF] rounded-full"></span>}
-                      </Box>
-                    <Box fontSize={{base:"12px", lg:"16px"}} fontWeight="400" mb={2}
-                    >{opt}</Box>
-                    </label>
-                  );
-                })}
-                        </Box>
-                    ))}
-
-                <Flex gap={{base:2, lg:12}} mt={{base:2, lg:12}} justify="space-between">
-                    <Button
-                    onClick={handlePrev}
-                    disabled={page === 0}
-                    colorScheme="gray"
-                    className="flex-1"
-                    >
-                        Previous
-                    </Button>
-
-                    {isLastPage ? (
-                    <Button onClick={handleSubmit} bgColor="#7A5FFF" className="flex-1 text-white py-3 rounded-lg">
-                        Submit
-                    </Button>
-                    ) : (
-                    <Button onClick={handleNext} bgColor="#7A5FFF" className="flex-1 text-white py-3 rounded-lg">
-                        Next
-                    </Button>
-                    )}
-                </Flex>
-
-                </Flex>
-            </Flex>
+      {/* Progress Bar - Desktop */}
+      <Flex
+        display={{ base: "none", lg: "flex" }}
+        justify="center"
+        pt="126px"
+        pb="60px"
+      >
+        <ProgressBar currentStep={currentStep} totalSteps={steps.length} />
       </Flex>
+
+      {/* Progress Bar - Mobile */}
+      <Flex
+        display={{ base: "flex", lg: "none" }}
+        justify="center"
+        pt="20px"
+        pb="30px"
+        px="20px"
+      >
+        <Box w="100%" maxW="335px">
+          <ProgressBar currentStep={currentStep} totalSteps={steps.length} />
+        </Box>
+      </Flex>
+
+      {/* Main Content - Desktop */}
+      <Container
+        maxW="995px"
+        display={{ base: "none", lg: "block" }}
+        mb="80px"
+        px="20px"
+      >
+        <Flex
+          bg="white"
+          borderRadius="32px"
+          overflow="hidden"
+          boxShadow="0px 19px 86.9px rgba(149, 127, 255, 0.53)"
+          minH="650px"
+          maxH="750px"
+        >
+          {/* Left Panel - Purple Gradient */}
+          <Flex
+            w="40%"
+            bg="linear-gradient(180deg, #7A5FFF 0%, #6366F1 100%)"
+            align="center"
+            justify="center"
+            p="60px"
+          >
+            <Text
+              fontSize="32px"
+              fontWeight="500"
+              color="white"
+              textAlign="center"
+              lineHeight="40px"
+              letterSpacing="-0.96px"
+            >
+              {currentStepData.title}
+            </Text>
+          </Flex>
+
+          {/* Right Panel - Content */}
+          <Flex
+            flex="1"
+            direction="column"
+            p="60px"
+            justify="space-between"
+            bg="white"
+            overflowY="auto"
+            css={{
+              "&::-webkit-scrollbar": {
+                width: "8px",
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "#f1f1f1",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#7A5FFF",
+                borderRadius: "4px",
+              },
+            }}
+          >
+            <Stack gap="30px" flex="1">
+              {currentStepData.questions.map((question) => (
+                <Box key={question.id}>
+                  <Text
+                    fontSize="20px"
+                    fontWeight="500"
+                    color="#1e1e2f"
+                    mb={question.subtitle ? "8px" : "24px"}
+                    letterSpacing="-0.6px"
+                    lineHeight={question.subtitle ? "32px" : "normal"}
+                  >
+                    {question.question}
+                  </Text>
+
+                  {question.subtitle && (
+                    <Text
+                      fontSize="20px"
+                      fontWeight="500"
+                      color="#6b7280"
+                      mb="24px"
+                      letterSpacing="-0.6px"
+                    >
+                      {question.subtitle}
+                    </Text>
+                  )}
+
+                  {question.type === "radio" && (
+                    <>
+                      <RadioGroup.Root
+                        value={
+                          answers[
+                            question.id as keyof PreAssessmentData
+                          ] as string
+                        }
+                        onValueChange={(e) => {
+                          if (e.value) {
+                            handleRadioChange(question.id, e.value);
+                          }
+                        }}
+                      >
+                        <Stack gap="10px">
+                          {question.options?.map((option) => {
+                            const isSelected =
+                              answers[
+                                question.id as keyof PreAssessmentData
+                              ] === option;
+                            return (
+                              <Box key={option}>
+                                <Flex
+                                  align="center"
+                                  gap="8px"
+                                  cursor="pointer"
+                                  onClick={() =>
+                                    handleRadioChange(question.id, option)
+                                  }
+                                >
+                                  <Box
+                                    w="16px"
+                                    h="16px"
+                                    borderRadius="50%"
+                                    border="1px solid #6b7280"
+                                    bg="white"
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    flexShrink="0"
+                                  >
+                                    {isSelected && (
+                                      <Box
+                                        w="10px"
+                                        h="10px"
+                                        borderRadius="50%"
+                                        bg="#7A5FFF"
+                                      />
+                                    )}
+                                  </Box>
+                                  <Text
+                                    fontSize="16px"
+                                    fontWeight="400"
+                                    color="#1e1e2f"
+                                    lineHeight="20px"
+                                  >
+                                    {option}
+                                  </Text>
+                                </Flex>
+
+                                {/* Show text input if "Other" option is selected */}
+                                {option.startsWith("Other:") && isSelected && (
+                                  <Input
+                                    value={
+                                      (answers[
+                                        `${question.id}Other` as keyof PreAssessmentData
+                                      ] as string) || ""
+                                    }
+                                    onChange={(e) =>
+                                      handleTextChange(
+                                        `${question.id}Other`,
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder="Please specify"
+                                    fontSize="14px"
+                                    color="#1e1e2f"
+                                    borderColor="#e5e7eb"
+                                    _focus={{ borderColor: "#7A5FFF" }}
+                                    mt="8px"
+                                    ml="24px"
+                                    maxW="400px"
+                                  />
+                                )}
+                              </Box>
+                            );
+                          })}
+                        </Stack>
+                      </RadioGroup.Root>
+                    </>
+                  )}
+
+                  {question.type === "checkbox" && (
+                    <Stack gap="10px">
+                      {question.options?.map((option) => {
+                        const isChecked = (
+                          (answers[
+                            question.id as keyof PreAssessmentData
+                          ] as string[]) || []
+                        ).includes(option);
+                        return (
+                          <Box key={option}>
+                            <Flex
+                              align="center"
+                              gap="8px"
+                              cursor="pointer"
+                              onClick={() =>
+                                handleCheckboxChange(
+                                  question.id,
+                                  option,
+                                  !isChecked
+                                )
+                              }
+                            >
+                              <Box
+                                w="16px"
+                                h="16px"
+                                borderRadius="50%"
+                                border="1px solid #6b7280"
+                                bg="white"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                              >
+                                {isChecked && (
+                                  <Box
+                                    w="10px"
+                                    h="10px"
+                                    borderRadius="50%"
+                                    bg="#7A5FFF"
+                                  />
+                                )}
+                              </Box>
+                              <Text
+                                fontSize="16px"
+                                fontWeight="400"
+                                color="#1e1e2f"
+                                lineHeight="20px"
+                              >
+                                {option}
+                              </Text>
+                            </Flex>
+
+                            {/* Show text input if "Other" option is checked */}
+                            {option.startsWith("Other:") && isChecked && (
+                              <Input
+                                value={
+                                  (answers[
+                                    `${question.id}Other` as keyof PreAssessmentData
+                                  ] as string) || ""
+                                }
+                                onChange={(e) =>
+                                  handleTextChange(
+                                    `${question.id}Other`,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Please specify"
+                                fontSize="14px"
+                                color="#1e1e2f"
+                                borderColor="#e5e7eb"
+                                _focus={{ borderColor: "#7A5FFF" }}
+                                mt="8px"
+                                ml="24px"
+                                maxW="400px"
+                              />
+                            )}
+                          </Box>
+                        );
+                      })}
+                    </Stack>
+                  )}
+
+                  {question.type === "text" && (
+                    <Input
+                      value={
+                        (answers[
+                          question.id as keyof PreAssessmentData
+                        ] as string) || ""
+                      }
+                      onChange={(e) =>
+                        handleTextChange(question.id, e.target.value)
+                      }
+                      placeholder={question.placeholder}
+                      fontSize="12px"
+                      color="#6b7280"
+                      borderColor="#e5e7eb"
+                      _focus={{ borderColor: "#7A5FFF" }}
+                    />
+                  )}
+                </Box>
+              ))}
+            </Stack>
+
+            <Flex direction="column" gap="20px" mt="30px" flexShrink="0">
+              <Flex gap="20px">
+                <Button
+                  flex="1"
+                  onClick={handleSkip}
+                  variant="ghost"
+                  color="#4976f4"
+                  fontSize="16px"
+                  fontWeight="400"
+                  textDecoration="underline"
+                  _hover={{ bg: "transparent" }}
+                  disabled={isSubmitting}
+                >
+                  Skip for now
+                </Button>
+
+                {isLastStep ? (
+                  <Button
+                    flex="1"
+                    onClick={handleSubmit}
+                    bg="#7A5FFF"
+                    color="white"
+                    fontSize="20px"
+                    fontWeight="500"
+                    letterSpacing="-0.6px"
+                    h="56px"
+                    borderRadius="12px"
+                    _hover={{ bg: "#6B4FEF" }}
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                  >
+                    Submit
+                  </Button>
+                ) : (
+                  <Button
+                    flex="1"
+                    onClick={handleNext}
+                    bg="#7A5FFF"
+                    color="white"
+                    fontSize="20px"
+                    fontWeight="500"
+                    letterSpacing="-0.6px"
+                    h="56px"
+                    borderRadius="12px"
+                    _hover={{ bg: "#6B4FEF" }}
+                    disabled={isSubmitting}
+                  >
+                    Next
+                  </Button>
+                )}
+              </Flex>
+            </Flex>
+          </Flex>
+        </Flex>
+      </Container>
+
+      {/* Main Content - Mobile */}
+      <Container
+        maxW="375px"
+        display={{ base: "block", lg: "none" }}
+        px="0"
+        mb="60px"
+      >
+        <Box px="20px" pb="40px">
+          {/* Purple Header */}
+          <Box
+            bg="linear-gradient(180deg, #7A5FFF 0%, #6366F1 100%)"
+            borderRadius="20px"
+            py="20px"
+            px="20px"
+            mb="10px"
+          >
+            <Text
+              fontSize="24px"
+              fontWeight="500"
+              color="white"
+              textAlign="center"
+              letterSpacing="-0.72px"
+            >
+              {currentStepData.mobileTitle}
+            </Text>
+          </Box>
+
+          {/* Questions */}
+          <Stack gap="30px" mb="30px">
+            {currentStepData.questions.map((question) => (
+              <Box key={question.id}>
+                <Text
+                  fontSize="16px"
+                  fontWeight="500"
+                  color="#1e1e2f"
+                  mb={question.subtitle ? "8px" : "19.2px"}
+                  letterSpacing="-0.48px"
+                  lineHeight={question.subtitle ? "25.6px" : "normal"}
+                >
+                  {question.question}
+                </Text>
+
+                {question.subtitle && (
+                  <Text
+                    fontSize="16px"
+                    fontWeight="500"
+                    color="#6b7280"
+                    mb="19.2px"
+                    letterSpacing="-0.48px"
+                  >
+                    {question.subtitle}
+                  </Text>
+                )}
+
+                {question.type === "radio" && (
+                  <>
+                    <RadioGroup.Root
+                      value={
+                        answers[
+                          question.id as keyof PreAssessmentData
+                        ] as string
+                      }
+                      onValueChange={(e) => {
+                        if (e.value) {
+                          handleRadioChange(question.id, e.value);
+                        }
+                      }}
+                    >
+                      <Stack gap="8px">
+                        {question.options?.map((option) => {
+                          const isSelected =
+                            answers[question.id as keyof PreAssessmentData] ===
+                            option;
+                          return (
+                            <Box key={option}>
+                              <Flex
+                                align="center"
+                                gap="6.4px"
+                                cursor="pointer"
+                                onClick={() =>
+                                  handleRadioChange(question.id, option)
+                                }
+                              >
+                                <Box
+                                  w="13px"
+                                  h="13px"
+                                  borderRadius="50%"
+                                  border="0.8px solid #6b7280"
+                                  bg="white"
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                  flexShrink="0"
+                                >
+                                  {isSelected && (
+                                    <Box
+                                      w="8px"
+                                      h="8px"
+                                      borderRadius="50%"
+                                      bg="#7A5FFF"
+                                    />
+                                  )}
+                                </Box>
+                                <Text
+                                  fontSize="14px"
+                                  fontWeight="400"
+                                  color="#1e1e2f"
+                                  lineHeight="16px"
+                                >
+                                  {option}
+                                </Text>
+                              </Flex>
+
+                              {/* Show text input if "Other" option is selected */}
+                              {option.startsWith("Other:") && isSelected && (
+                                <Input
+                                  value={
+                                    (answers[
+                                      `${question.id}Other` as keyof PreAssessmentData
+                                    ] as string) || ""
+                                  }
+                                  onChange={(e) =>
+                                    handleTextChange(
+                                      `${question.id}Other`,
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Please specify"
+                                  fontSize="12px"
+                                  color="#1e1e2f"
+                                  borderColor="#e5e7eb"
+                                  _focus={{ borderColor: "#7A5FFF" }}
+                                  mt="6px"
+                                  ml="20px"
+                                  size="sm"
+                                />
+                              )}
+                            </Box>
+                          );
+                        })}
+                      </Stack>
+                    </RadioGroup.Root>
+                  </>
+                )}
+
+                {question.type === "checkbox" && (
+                  <Stack gap="8px">
+                    {question.options?.map((option) => {
+                      const isChecked = (
+                        (answers[
+                          question.id as keyof PreAssessmentData
+                        ] as string[]) || []
+                      ).includes(option);
+                      return (
+                        <Box key={option}>
+                          <Flex
+                            align="center"
+                            gap="6.4px"
+                            cursor="pointer"
+                            onClick={() =>
+                              handleCheckboxChange(
+                                question.id,
+                                option,
+                                !isChecked
+                              )
+                            }
+                          >
+                            <Box
+                              w="13px"
+                              h="13px"
+                              borderRadius="50%"
+                              border="0.8px solid #6b7280"
+                              bg="white"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                            >
+                              {isChecked && (
+                                <Box
+                                  w="8px"
+                                  h="8px"
+                                  borderRadius="50%"
+                                  bg="#7A5FFF"
+                                />
+                              )}
+                            </Box>
+                            <Text
+                              fontSize="14px"
+                              fontWeight="400"
+                              color="#1e1e2f"
+                              lineHeight="16px"
+                            >
+                              {option}
+                            </Text>
+                          </Flex>
+
+                          {/* Show text input if "Other" option is checked */}
+                          {option.startsWith("Other:") && isChecked && (
+                            <Input
+                              value={
+                                (answers[
+                                  `${question.id}Other` as keyof PreAssessmentData
+                                ] as string) || ""
+                              }
+                              onChange={(e) =>
+                                handleTextChange(
+                                  `${question.id}Other`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Please specify"
+                              fontSize="12px"
+                              color="#1e1e2f"
+                              borderColor="#e5e7eb"
+                              _focus={{ borderColor: "#7A5FFF" }}
+                              mt="6px"
+                              ml="20px"
+                              size="sm"
+                            />
+                          )}
+                        </Box>
+                      );
+                    })}
+                  </Stack>
+                )}
+
+                {question.type === "text" && (
+                  <Input
+                    value={
+                      (answers[
+                        question.id as keyof PreAssessmentData
+                      ] as string) || ""
+                    }
+                    onChange={(e) =>
+                      handleTextChange(question.id, e.target.value)
+                    }
+                    placeholder={question.placeholder}
+                    fontSize="12px"
+                    color="#6b7280"
+                    borderColor="#e5e7eb"
+                    _focus={{ borderColor: "#7A5FFF" }}
+                  />
+                )}
+              </Box>
+            ))}
+          </Stack>
+
+          {/* Navigation Buttons */}
+          <Flex direction="column" gap="20px">
+            <Flex justify="space-between" align="center">
+              <Button
+                onClick={handleSkip}
+                variant="ghost"
+                color="#4976f4"
+                fontSize="16px"
+                fontWeight="500"
+                textDecoration="underline"
+                letterSpacing="-0.48px"
+                _hover={{ bg: "transparent" }}
+                disabled={isSubmitting}
+                p="0"
+              >
+                Skip
+              </Button>
+
+              {isLastStep ? (
+                <Button
+                  onClick={handleSubmit}
+                  bg="#7A5FFF"
+                  color="white"
+                  fontSize="16px"
+                  fontWeight="500"
+                  letterSpacing="-0.48px"
+                  px="32px"
+                  h="48px"
+                  borderRadius="8px"
+                  _hover={{ bg: "#6B4FEF" }}
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
+                >
+                  Submit
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleNext}
+                  bg="#7A5FFF"
+                  color="white"
+                  fontSize="16px"
+                  fontWeight="500"
+                  letterSpacing="-0.48px"
+                  px="32px"
+                  h="48px"
+                  borderRadius="8px"
+                  _hover={{ bg: "#6B4FEF" }}
+                  disabled={isSubmitting}
+                >
+                  Next
+                </Button>
+              )}
+            </Flex>
+          </Flex>
+        </Box>
+      </Container>
     </Box>
   );
 }

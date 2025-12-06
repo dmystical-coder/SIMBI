@@ -9,6 +9,8 @@ export interface User {
   preferredStudyMethod?: string;
   createdAt: string;
   lastLogin?: string;
+  hasCompletedPreAssessment?: boolean;
+  preAssessmentCompletedAt?: string | null;
 }
 
 export interface LoginCredentials {

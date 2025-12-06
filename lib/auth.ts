@@ -189,3 +189,97 @@ export const getAuthToken = (): string | null => {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("authToken");
 };
+
+/**
+ * Submit pre-assessment answers
+ */
+export const submitPreAssessment = async (
+  answers: Record<string, string | string[]>
+): Promise<{ status: string; message: string }> => {
+  try {
+    const response = await api.post<{ status: string; message: string }>(
+      "/api/v1/pre-assessment",
+      answers
+    );
+
+    // Fetch updated user data from backend after successful submission
+    // This ensures we get the hasCompletedPreAssessment flag from the server
+    try {
+      const userResponse = await api.get<{ status: string; user: User }>(
+        "/api/v1/users/me"
+      );
+      if (userResponse.data.status === "success") {
+        localStorage.setItem("user", JSON.stringify(userResponse.data.user));
+        // Clear the skip flag since assessment is now completed
+        localStorage.removeItem("preAssessmentSkipped");
+      }
+    } catch (error) {
+      console.error("Failed to fetch updated user profile:", error);
+      // Fallback: update local user object if API call fails
+      const user = getCurrentUser();
+      if (user) {
+        user.hasCompletedPreAssessment = true;
+        user.preAssessmentCompletedAt = new Date().toISOString();
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.removeItem("preAssessmentSkipped");
+      }
+    }
+
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      throw error.response.data;
+    }
+    throw {
+      status: "error",
+      message: "Failed to submit pre-assessment. Please try again.",
+    };
+  }
+};
+
+/**
+ * Mark pre-assessment as skipped (stores in localStorage)
+ */
+export const skipPreAssessment = (): void => {
+  const user = getCurrentUser();
+  if (user) {
+    user.hasCompletedPreAssessment = false;
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("preAssessmentSkipped", "true");
+  }
+};
+
+/**
+ * Check if user has completed or skipped pre-assessment
+ */
+export const hasCompletedPreAssessment = (): boolean => {
+  const user = getCurrentUser();
+  return user?.hasCompletedPreAssessment === true;
+};
+
+/**
+ * Check if user has skipped pre-assessment
+ */
+export const hasSkippedPreAssessment = (): boolean => {
+  return localStorage.getItem("preAssessmentSkipped") === "true";
+};
+
+/**
+ * Refresh user data from backend
+ * Useful for syncing local state with server state
+ */
+export const refreshUserData = async (): Promise<User | null> => {
+  try {
+    const userResponse = await api.get<{ status: string; user: User }>(
+      "/api/v1/users/me"
+    );
+    if (userResponse.data.status === "success") {
+      localStorage.setItem("user", JSON.stringify(userResponse.data.user));
+      return userResponse.data.user;
+    }
+    return null;
+  } catch (error) {
+    console.error("Failed to refresh user data:", error);
+    return null;
+  }
+};
