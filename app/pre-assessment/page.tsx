@@ -288,19 +288,6 @@ export default function PreAssessment() {
     }));
   };
 
-  const isOtherSelected = (questionId: string, optionText: string) => {
-    if (questionId === "hearAbout" || questionId === "goals") {
-      const values = answers[questionId as keyof PreAssessmentData] as
-        | string[]
-        | undefined;
-      return values?.some((v) => v.startsWith("Other:")) || false;
-    }
-    const value = answers[questionId as keyof PreAssessmentData] as
-      | string
-      | undefined;
-    return value?.startsWith("Other:") || false;
-  };
-
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);

@@ -6,27 +6,17 @@ import { Button, Box, Heading, Text, Stack } from "@chakra-ui/react";
 import { Alert } from "@chakra-ui/react";
 import { hasCompletedPreAssessment, hasSkippedPreAssessment } from "@/lib/auth";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
   // This hook will redirect to /auth/sign-in if user is not authenticated
   const { isLoading } = useRequireAuth();
   const { user, logout } = useAuth();
   const router = useRouter();
-  const [showPreAssessmentPrompt, setShowPreAssessmentPrompt] = useState(false);
-
-  useEffect(() => {
-    // Check if user skipped pre-assessment
-    if (!isLoading && user) {
-      const completedPreAssessment = hasCompletedPreAssessment();
-      const skippedPreAssessment = hasSkippedPreAssessment();
-
-      // Show prompt if they skipped but haven't completed
-      setShowPreAssessmentPrompt(
-        skippedPreAssessment && !completedPreAssessment
-      );
-    }
-  }, [isLoading, user]);
+  
+  // Compute directly without setState in effect
+  const showPreAssessmentPrompt = !isLoading && user
+    ? hasSkippedPreAssessment() && !hasCompletedPreAssessment()
+    : false;
 
   if (isLoading) {
     return (
