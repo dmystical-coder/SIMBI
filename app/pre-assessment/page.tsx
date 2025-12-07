@@ -605,7 +605,7 @@ export default function PreAssessment() {
                               <Box
                                 w="16px"
                                 h="16px"
-                                borderRadius="50%"
+                                borderRadius="3px"
                                 border="1px solid #6b7280"
                                 bg="white"
                                 display="flex"
@@ -616,7 +616,7 @@ export default function PreAssessment() {
                                   <Box
                                     w="10px"
                                     h="10px"
-                                    borderRadius="50%"
+                                    borderRadius="2px"
                                     bg="#7A5FFF"
                                   />
                                 )}
@@ -908,7 +908,7 @@ export default function PreAssessment() {
                             <Box
                               w="13px"
                               h="13px"
-                              borderRadius="50%"
+                              borderRadius="2px"
                               border="0.8px solid #6b7280"
                               bg="white"
                               display="flex"
@@ -919,7 +919,7 @@ export default function PreAssessment() {
                                 <Box
                                   w="8px"
                                   h="8px"
-                                  borderRadius="50%"
+                                  borderRadius="1.5px"
                                   bg="#7A5FFF"
                                 />
                               )}
