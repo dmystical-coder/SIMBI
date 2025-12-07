@@ -53,25 +53,23 @@ export default function StudyConsistencyChart() {
       );
 
       // Transform data for chart
-      const transformed: ChartDataPoint[] = consistencyData.map(
-        (item) => {
-          let dayLabel: string;
-          if (selectedTimeFrame === "year") {
-            // For year view, show month abbreviation
-            const date = new Date(item.date + "-01");
-            dayLabel = date.toLocaleDateString("en-US", { month: "short" });
-          } else {
-            // For week/month view, show day abbreviation
-            const date = new Date(item.date);
-            dayLabel = date.toLocaleDateString("en-US", { weekday: "short" });
-          }
-
-          return {
-            day: dayLabel,
-            hours: item.hours,
-          };
+      const transformed: ChartDataPoint[] = consistencyData.map((item) => {
+        let dayLabel: string;
+        if (selectedTimeFrame === "year") {
+          // For year view, show month abbreviation
+          const date = new Date(item.date + "-01");
+          dayLabel = date.toLocaleDateString("en-US", { month: "short" });
+        } else {
+          // For week/month view, show day abbreviation
+          const date = new Date(item.date);
+          dayLabel = date.toLocaleDateString("en-US", { weekday: "short" });
         }
-      );
+
+        return {
+          day: dayLabel,
+          hours: item.hours,
+        };
+      });
 
       // Find max hours for chart scaling
       const max = Math.max(...transformed.map((d) => d.hours), 10);

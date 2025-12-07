@@ -194,7 +194,7 @@ export default function ProductivityScorecard() {
 
         {/* Study Session */}
         <Box
-        position="relative"
+          position="relative"
           bg="white"
           borderRadius="16px"
           boxShadow="0px 0px 2px rgba(0, 0, 0, 0.06)"
@@ -212,7 +212,6 @@ export default function ProductivityScorecard() {
           </Text>
 
           <Box
-            
             w="160px"
             h="160px"
             mx="auto"
@@ -324,7 +323,6 @@ export default function ProductivityScorecard() {
           <Text fontSize="18px" fontWeight={600} color="#111827" mb="12px">
             Rating
           </Text>
-
           <Box
             position="relative"
             w="160px"
@@ -357,13 +355,18 @@ export default function ProductivityScorecard() {
                 strokeWidth="16"
                 strokeLinecap="round"
                 strokeDasharray={`${Math.PI * 65}`}
-              strokeDashoffset={`${
-                Math.PI * 65 * (1 - ratingPercentage / 100)
-              }`}
+                strokeDashoffset={`${
+                  Math.PI * 65 * (1 - ratingPercentage / 100)
+                }`}
+              />
+            </svg>
+            <Image
+              className="absolute w-12 h-12 bottom-0"
+              src="/smiley.svg"
+              alt="Rating indicator"
             />
-          </svg>
-            <Image className="absolute w-12 h-12 bottom-0" src="/smiley.svg" alt="Rating indicator" />
-        </Box>          <Text fontSize="16px" fontWeight={500} color="#111827" mb="6px">
+          </Box>{" "}
+          <Text fontSize="16px" fontWeight={500} color="#111827" mb="6px">
             {Math.round(ratingPercentage)}% Brainpower
           </Text>
           <Text fontSize="13px" fontWeight={400} color="#9ca3af" mb="20px">
