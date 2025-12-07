@@ -2,81 +2,71 @@
 
 import { useRequireAuth } from "@/hooks/useAuth";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button, Box, Heading, Text, Stack } from "@chakra-ui/react";
-import { Alert } from "@chakra-ui/react";
-import { hasCompletedPreAssessment, hasSkippedPreAssessment } from "@/lib/auth";
+import { Box, Text, Stack, Grid } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import WelcomeSection from "@/components/dashboard/WelcomeSection";
+import StudyStreak from "@/components/dashboard/StudyStreak";
+import ProductivityScorecard from "@/components/dashboard/ProductivityScorecard";
+import ActiveStudyPlan from "@/components/dashboard/ActiveStudyPlan";
+import TodaySchedule from "@/components/dashboard/TodaySchedule";
+import RewardsAndMilestones from "@/components/dashboard/RewardsAndMilestones";
+import StudyTips from "@/components/dashboard/StudyTips";
+import StudyConsistencyChart from "@/components/dashboard/StudyConsistencyChart";
 
 export default function DashboardPage() {
-  // This hook will redirect to /auth/sign-in if user is not authenticated
   const { isLoading } = useRequireAuth();
-  const { user, logout } = useAuth();
-  const router = useRouter();
-  
-  // Compute directly without setState in effect
-  const showPreAssessmentPrompt = !isLoading && user
-    ? hasSkippedPreAssessment() && !hasCompletedPreAssessment()
-    : false;
+  const { user } = useAuth();
 
   if (isLoading) {
     return (
-      <Box p={8}>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        minH="100vh"
+      >
         <Text>Loading...</Text>
       </Box>
     );
   }
 
   return (
-    <Box p={8}>
-      <Stack gap={4}>
-        {showPreAssessmentPrompt && (
-          <Alert.Root borderStartWidth="4px" borderStartColor="orange.500">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Title>Complete Your Pre-Assessment</Alert.Title>
-              <Alert.Description>
-                Help us personalize your SIMBI experience by completing a quick
-                pre-assessment.
-                <Button
-                  onClick={() => router.push("/pre-assessment")}
-                  variant="outline"
-                  size="sm"
-                  ml={4}
-                  colorPalette="orange"
-                >
-                  Take Assessment
-                </Button>
-              </Alert.Description>
-            </Alert.Content>
-          </Alert.Root>
-        )}
+    <DashboardLayout>
+      <Stack gap="33px">
+        {/* Main Content Grid */}
+        <Grid templateColumns={{ base: "1fr", xl: "1fr 400px" }} gap="40px">
+          {/* Left Column */}
+          <Stack gap="28px">
+            {/* Welcome Section */}
+            <WelcomeSection />
 
-        <Heading size="lg">Welcome to SIMBI Dashboard</Heading>
+            {/* Study Streak */}
+            <StudyStreak />
 
-        <Box>
-          <Text fontSize="lg">
-            Hello, {user?.firstName} {user?.lastName}!
-          </Text>
-          <Text color="gray.600">{user?.email}</Text>
-        </Box>
+            {/* Productivity Scorecard */}
+            <ProductivityScorecard />
 
-        <Box>
-          <Text mb={2}>User ID: {user?.id}</Text>
-          <Text mb={2}>
-            Account created:{" "}
-            {user?.createdAt && new Date(user.createdAt).toLocaleDateString()}
-          </Text>
-        </Box>
+            {/* Active Study Plan & Today's Schedule */}
+            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap="40px">
+              <ActiveStudyPlan />
+              <TodaySchedule />
+            </Grid>
+          </Stack>
 
-        <Button
-          onClick={logout}
-          colorPalette="red"
-          variant="outline"
-          w="fit-content"
-        >
-          Logout
-        </Button>
+          {/* Right Column */}
+          <Stack gap="24px">
+            {/* Rewards and Milestones */}
+            <RewardsAndMilestones />
+
+            {/* Study Tips */}
+            <StudyTips />
+
+            {/* Study Consistency Chart */}
+            <StudyConsistencyChart />
+          </Stack>
+        </Grid>
       </Stack>
-    </Box>
+    </DashboardLayout>
   );
 }
