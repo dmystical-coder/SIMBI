@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, Text, Button, Image} from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { Box, Text, Image, Button } from "@chakra-ui/react";
+import { useState, useEffect, useCallback } from "react";
 import {
   getStudyPlans,
   getStudySessions,
@@ -22,11 +22,7 @@ export default function ProductivityScorecard() {
   });
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchProductivityData();
-  }, [selectedTimeFrame]);
-
-  const fetchProductivityData = async () => {
+  const fetchProductivityData = useCallback(async () => {
     setIsLoading(true);
     try {
       const studyPlans = await getStudyPlans();
@@ -49,7 +45,11 @@ export default function ProductivityScorecard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedTimeFrame]);
+
+  useEffect(() => {
+    fetchProductivityData();
+  }, [fetchProductivityData]);
 
   // Calculate percentages for circular progress
   const studyHoursPercentage = Math.min(
@@ -357,15 +357,13 @@ export default function ProductivityScorecard() {
                 strokeWidth="16"
                 strokeLinecap="round"
                 strokeDasharray={`${Math.PI * 65}`}
-                strokeDashoffset={`${
-                  Math.PI * 65 * (1 - ratingPercentage / 100)
-                }`}
-              />
-            </svg>
-              <Image className="absolute w-12 h-12 bottom-0" src="/smiley.svg" />
-          </Box>
-
-          <Text fontSize="16px" fontWeight={500} color="#111827" mb="6px">
+              strokeDashoffset={`${
+                Math.PI * 65 * (1 - ratingPercentage / 100)
+              }`}
+            />
+          </svg>
+            <Image className="absolute w-12 h-12 bottom-0" src="/smiley.svg" alt="Rating indicator" />
+        </Box>          <Text fontSize="16px" fontWeight={500} color="#111827" mb="6px">
             {Math.round(ratingPercentage)}% Brainpower
           </Text>
           <Text fontSize="13px" fontWeight={400} color="#9ca3af" mb="20px">

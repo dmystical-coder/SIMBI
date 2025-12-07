@@ -120,13 +120,13 @@ export default function StudyStreak() {
           p="16px"
         >
           <Text
-            fontSize="14px"
-            fontWeight={400}
+            fontSize="11px"
+            fontWeight={500}
             color="#5b616e"
             mb="13px"
             lineHeight="13.50px"
           >
-            Simbi's Mood
+            Simbi&apos;s Mood
           </Text>
           <Text
             fontSize="16px"

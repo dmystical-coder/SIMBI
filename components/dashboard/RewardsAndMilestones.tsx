@@ -7,7 +7,6 @@ import {
   getStudySessions,
   getAllMilestones,
   type StudySession,
-  type Milestone,
 } from "@/lib/dashboard";
 
 interface StatCard {

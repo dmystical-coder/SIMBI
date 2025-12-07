@@ -102,15 +102,13 @@ export default function SimbiStreakOverlay({
               maxW={{ base: "335px", md: "776px" }}
               fontFamily="Poppins, sans-serif"
             >
-              <Text as="span" fontWeight={600}>
-                STREAK MODE: ACTIVATED ⚡
-              </Text>
-              <br />
-              You've smashed {consecutiveDays} plans in a row! I've notified the
-              Study gods—they're impressed.
+            <Text as="span" fontWeight={600}>
+              STREAK MODE: ACTIVATED ⚡
             </Text>
-
-            {/* Simbi Character */}
+            <br />
+            You&apos;ve smashed {consecutiveDays} plans in a row! I&apos;ve notified the
+            Study gods—they&apos;re impressed.
+          </Text>            {/* Simbi Character */}
             <Box
               position="relative"
               w={{ base: "240px", sm: "280px", md: "412px" }}

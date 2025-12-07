@@ -2,7 +2,7 @@
 
 import { Box, Text, Image, Stack } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { getTodaySchedule, type TodayScheduleItem } from "@/lib/dashboard";
+import { getTodaySchedule } from "@/lib/dashboard";
 
 interface ScheduleDisplay {
   id: string;

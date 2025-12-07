@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Stack, Text, Image, Button, IconButton } from "@chakra-ui/react";
+import { Box, Stack, Text, Image, IconButton } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

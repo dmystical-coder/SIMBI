@@ -2,7 +2,7 @@
 
 import { Box, Text, Image, Stack } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { getActiveStudyPlans, type StudyPlan } from "@/lib/dashboard";
+import { getActiveStudyPlans } from "@/lib/dashboard";
 
 interface StudyPlanDisplay {
   id: string;

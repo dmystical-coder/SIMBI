@@ -1,9 +1,7 @@
 "use client";
 
 import { useRequireAuth } from "@/hooks/useAuth";
-import { useAuth } from "@/contexts/AuthContext";
 import { Box, Text, Stack, Grid } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import WelcomeSection from "@/components/dashboard/WelcomeSection";
 import StudyStreak from "@/components/dashboard/StudyStreak";
@@ -16,7 +14,6 @@ import StudyConsistencyChart from "@/components/dashboard/StudyConsistencyChart"
 
 export default function DashboardPage() {
   const { isLoading } = useRequireAuth();
-  const { user } = useAuth();
 
   if (isLoading) {
     return (

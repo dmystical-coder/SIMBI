@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Text } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   AreaChart,
   Area,
@@ -17,7 +17,6 @@ import {
   getStudySessions,
   getStudyConsistencyData,
   type StudySession,
-  type StudyConsistencyData,
 } from "@/lib/dashboard";
 
 type TimeFrame = "week" | "month" | "year";
@@ -35,11 +34,7 @@ export default function StudyConsistencyChart() {
   const [isLoading, setIsLoading] = useState(true);
   const [maxHours, setMaxHours] = useState(10);
 
-  useEffect(() => {
-    fetchConsistencyData();
-  }, [selectedTimeFrame]);
-
-  const fetchConsistencyData = async () => {
+  const fetchConsistencyData = useCallback(async () => {
     setIsLoading(true);
     try {
       const studyPlans = await getStudyPlans();
@@ -59,7 +54,7 @@ export default function StudyConsistencyChart() {
 
       // Transform data for chart
       const transformed: ChartDataPoint[] = consistencyData.map(
-        (item, index) => {
+        (item) => {
           let dayLabel: string;
           if (selectedTimeFrame === "year") {
             // For year view, show month abbreviation
@@ -102,7 +97,11 @@ export default function StudyConsistencyChart() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedTimeFrame]);
+
+  useEffect(() => {
+    fetchConsistencyData();
+  }, [fetchConsistencyData]);
 
   return (
     <Box>

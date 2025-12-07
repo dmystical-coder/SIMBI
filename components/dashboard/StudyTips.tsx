@@ -12,10 +12,10 @@ export default function StudyTips() {
         mb="12px"
       >
         <Text fontSize="14px" fontWeight={600} color="#1e1e2f">
-          Simbi's Study tips
+          Simbi&apos;s Study tips
         </Text>
         <Box cursor="pointer">
-          <Image src="/icons/more.svg" />
+          <Image src="/icons/more.svg" alt="More options" />
         </Box>
       </Box>
 
