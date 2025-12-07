@@ -21,7 +21,7 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/login");
+    router.push("/auth/sign-in");
   };
 
   const handleUpgradePlan = () => {
