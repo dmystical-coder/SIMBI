@@ -40,7 +40,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
         alt={`Progress ${milestone}${milestone !== "Default" ? "%" : ""}`}
         width={310}
         height={40}
-        style={{ maxWidth: '100%', height: 'auto' }}
+        style={{ width: 'auto', height: 'auto' }}
       />
     </Box>
   );
