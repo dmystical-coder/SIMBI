@@ -35,16 +35,17 @@ export const AuthLayout = ({
       {/* Logo - Mobile Only */}
       <Box
         position="absolute"
-        top={{ base: 2.5, lg: 0 }}
-        left={{ base: 12, lg: 0 }}
+        top={{ base: 5, lg: 0 }}
+        left="50%"
+        transform="translateX(-50%)"
         display={{ base: "block", lg: "none" }}
         zIndex={10}
       >
         <Image
           src="/logo.svg"
           alt="SIMBI Logo"
-          width={102}
-          height={26}
+          width={130}
+          height={33}
           priority
         />
       </Box>
@@ -62,8 +63,8 @@ export const AuthLayout = ({
           lg: "0px 19px 86.9px rgba(149, 127, 255, 0.53)",
         }}
         flexDirection={{ base: "column", lg: "row" }}
-        mt={{ base: 32, lg: 0 }}
-        mb={{ base: 0, lg: 0 }}
+        mt={{ base: 20, lg: 0 }}
+        mb={{ base: 8, lg: 0 }}
         mx={{ base: 5, lg: 0 }}
       >
         {/* Left Side - Branding (Desktop) / Top Section (Mobile) */}
@@ -135,7 +136,7 @@ export const AuthLayout = ({
         {/* Right Side - Form */}
         <Flex
           flex={{ base: "none", lg: 1 }}
-          p={{ base: 8, lg: 12 }}
+          p={{ base: "32px 32px 40px", lg: 12 }}
           align="center"
           justify="center"
           bg="white"
