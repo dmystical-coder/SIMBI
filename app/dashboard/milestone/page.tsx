@@ -4,7 +4,7 @@ import { useRequireAuth } from "@/hooks/useAuth";
 import { Box, Text, Grid, Flex } from "@chakra-ui/react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MilestoneTracker from "@/components/dashboard/MilestoneTracker";
-import MilestoneDatePicker from "@/components/dashboard/MilestoneDatePicker";
+import MilestoneDatePicker, { ViewType } from "@/components/dashboard/MilestoneDatePicker";
 import MilestoneCard from "@/components/dashboard/MilestoneCard";
 import SimbiPepTalk from "@/components/dashboard/SimbiPepTalk";
 import ScoreCard from "@/components/dashboard/ScoreCard";
@@ -38,7 +38,7 @@ export default function MilestonePage() {
     console.log("Date changed to:", date);
   };
 
-  const handleViewChange = (view: "calendar" | "list") => {
+  const handleViewChange = (view: ViewType) => {
     console.log("View changed to:", view);
   };
 
