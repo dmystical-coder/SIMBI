@@ -2,7 +2,9 @@
 
 import { Box, Stack, Text, Image, IconButton } from "@chakra-ui/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NavItem {
   label: string;
@@ -22,11 +24,13 @@ const navItems: NavItem[] = [
     label: "Study plans",
     href: "/dashboard/study-plans",
     icon: "/icons/category.svg",
+    showIndicator: true,
   },
   {
     label: "Schedule",
     href: "/dashboard/schedule",
     icon: "/icons/schedule.svg",
+    showIndicator: true,
   },
   {
     label: "Milestone",
@@ -34,13 +38,24 @@ const navItems: NavItem[] = [
     icon: "/icons/milestone.svg",
     showIndicator: true,
   },
-  { label: "Rewards", href: "/dashboard/rewards", icon: "/icons/rewards.svg" },
+  {
+    label: "Rewards",
+    href: "/dashboard/rewards",
+    icon: "/icons/rewards.svg",
+    showIndicator: true,
+  },
   {
     label: "Resources",
     href: "/dashboard/resources",
     icon: "/icons/book-open.svg",
+    showIndicator: true,
   },
-  { label: "Let's Chat", href: "/dashboard/chat", icon: "/icons/chat.svg" },
+  {
+    label: "Let's Chat",
+    href: "/dashboard/chat",
+    icon: "/icons/chat.svg",
+    showIndicator: true,
+  },
 ];
 
 interface SidebarProps {
@@ -50,6 +65,14 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { refreshAuth } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    refreshAuth();
+    router.push("/auth/sign-in");
+  };
 
   return (
     <Box
@@ -164,6 +187,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           cursor="pointer"
           _hover={{ opacity: 0.8 }}
           mt="4px"
+          onClick={handleLogout}
         >
           <Box
             w="24px"
