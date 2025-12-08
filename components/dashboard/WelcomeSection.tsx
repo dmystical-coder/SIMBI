@@ -5,15 +5,61 @@ import { useRouter } from "next/navigation";
 import { hasCompletedPreAssessment, hasSkippedPreAssessment } from "@/lib/auth";
 import Image from "next/image";
 
-export default function WelcomeSection() {
+interface WelcomeSectionProps {
+  title?: string;
+  message?: string;
+  ctaText?: string;
+  ctaAction?: () => void;
+  showCTA?: boolean;
+  backgroundColor?: string;
+  textColor?: string;
+  characterImage?: string;
+  characterPosition?: {
+    top?: { base?: string; md?: string; lg?: string };
+    right?: { base?: string; md?: string; lg?: string };
+  };
+  characterSize?: {
+    w?: { base?: string; md?: string; lg?: string };
+    h?: { base?: string; md?: string; lg?: string };
+  };
+}
+
+export default function WelcomeSection({
+  title,
+  message,
+  ctaText,
+  ctaAction,
+  showCTA = true,
+  backgroundColor = "#f3f2ff",
+  textColor = "#27104e",
+  characterImage = "/images/simbi-waving.svg",
+  characterPosition = {
+    top: { base: "-70px", md: "-60px", lg: "-78px" },
+    right: { base: "50%", md: "20px", lg: "38px" },
+  },
+  characterSize = {
+    w: { base: "140px", md: "170px", lg: "189px" },
+    h: { base: "180px", md: "270px", lg: "300px" },
+  },
+}: WelcomeSectionProps) {
   const router = useRouter();
 
   const hasSkipped = hasSkippedPreAssessment();
   const hasCompleted = hasCompletedPreAssessment();
   const showPreAssessmentPrompt = hasSkipped && !hasCompleted;
 
+  const defaultTitle = "Welcome back";
+  const defaultMessage = showPreAssessmentPrompt
+    ? "Complete your pre-assessment to help us personalize your learning experience"
+    : "I'm Simbi, ready to learn and have fun?";
+  const defaultCTAText = showPreAssessmentPrompt
+    ? "Take Pre-Assessment"
+    : "Generate a study plan";
+
   const handleCTAClick = () => {
-    if (showPreAssessmentPrompt) {
+    if (ctaAction) {
+      ctaAction();
+    } else if (showPreAssessmentPrompt) {
       router.push("/pre-assessment");
     } else {
       // TODO: Navigate to study plan generation
@@ -23,7 +69,7 @@ export default function WelcomeSection() {
 
   return (
     <Box
-      bg="#f3f2ff"
+      bg={backgroundColor}
       borderRadius="20px"
       p={{
         base: "24px 24px 24px 24px",
@@ -45,16 +91,25 @@ export default function WelcomeSection() {
         {/* Simbi Character - Mobile: Top (extending out), Desktop: Right */}
         <Box
           position="absolute"
-          right={{ base: "50%", md: "20px", lg: "38px" }}
-          top={{ base: "-70px", md: "-60px", lg: "-78px" }}
-          transform={{ base: "translateX(50%)", md: "none" }}
-          w={{ base: "140px", md: "170px", lg: "189px" }}
-          h={{ base: "180px", md: "270px", lg: "300px" }}
+          right={characterPosition.right}
+          top={characterPosition.top}
+          transform={{
+            base:
+              characterPosition.top?.base === "50%"
+                ? "translateY(-50%)"
+                : "translateX(50%)",
+            md:
+              characterPosition.top?.md === "50%" ? "translateY(-50%)" : "none",
+            lg:
+              characterPosition.top?.lg === "50%" ? "translateY(-50%)" : "none",
+          }}
+          w={characterSize.w}
+          h={characterSize.h}
           flexShrink={0}
           pointerEvents="none"
         >
           <Image
-            src="/images/simbi-waving.svg"
+            src={characterImage}
             alt="Simbi character"
             fill
             style={{ objectFit: "contain" }}
@@ -73,44 +128,39 @@ export default function WelcomeSection() {
           <Text
             fontSize={{ base: "28px", md: "36px", lg: "40px" }}
             fontWeight={600}
-            color="#27104e"
+            color={textColor}
             lineHeight="1.5"
             textAlign={{ base: "center", md: "left" }}
           >
-            Welcome back
+            {title || defaultTitle}
           </Text>
 
           <Text
             fontSize={{ base: "14px", md: "16px", lg: "18px" }}
             fontWeight={500}
-            color="#27104e"
+            color={textColor}
             lineHeight="1.5"
             textAlign={{ base: "center", md: "left" }}
           >
-            {showPreAssessmentPrompt
-              ? "Complete your pre-assessment to help us personalize your learning experience"
-              : "I'm Simbi, ready to learn and have fun?"}
+            {message || defaultMessage}
           </Text>
 
-          <Button
-            bg="#7a5fff"
-            color="#fdfdff"
-            fontSize={{ base: "14px", md: "15px", lg: "16px" }}
-            fontWeight={500}
-            h={{ base: "44px", md: "48px" }}
-            px={{ base: "20px", md: "24px", lg: "13px" }}
-            borderRadius="8px"
-            _hover={{ bg: "#6b4fee" }}
-            _active={{ bg: "#5c3fdd" }}
-            onClick={handleCTAClick}
-            w={{ base: "100%", sm: "auto" }}
-            maxW="250px"
-            mx={{ base: "auto", md: "0" }}
-          >
-            {showPreAssessmentPrompt
-              ? "Complete Pre-Assessment"
-              : "Generate a new Study Plan"}
-          </Button>
+          {showCTA && (
+            <Button
+              bg="#7a5fff"
+              color="#fdfdff"
+              fontSize={{ base: "14px", md: "15px", lg: "16px" }}
+              fontWeight={500}
+              h={{ base: "44px", md: "48px" }}
+              px={{ base: "24px", md: "32px" }}
+              borderRadius="8px"
+              _hover={{ bg: "#6B4FEF" }}
+              onClick={handleCTAClick}
+              maxW={{ base: "100%", md: "fit-content" }}
+            >
+              {ctaText || defaultCTAText}
+            </Button>
+          )}
         </Stack>
       </Flex>
     </Box>
