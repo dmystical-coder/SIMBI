@@ -22,6 +22,13 @@ interface WelcomeSectionProps {
     w?: { base?: string; md?: string; lg?: string };
     h?: { base?: string; md?: string; lg?: string };
   };
+  titleFontSize?: object | string;
+  messageFontSize?: object | string;
+  mt?: object | string | number;
+  minH?: object | string | number;
+  maxW?: object | string | number;
+  p?: object | string | number;
+  imageLayout?: "overlay" | "inline";
 }
 
 export default function WelcomeSection({
@@ -41,6 +48,17 @@ export default function WelcomeSection({
     w: { base: "140px", md: "170px", lg: "189px" },
     h: { base: "180px", md: "270px", lg: "300px" },
   },
+  titleFontSize = { base: "28px", md: "36px", lg: "40px" },
+  messageFontSize = { base: "14px", md: "16px", lg: "18px" },
+  mt = { base: "80px", md: "0" },
+  minH = { base: "auto", lg: "231px" },
+  maxW = { base: "100%", lg: "647px" },
+  p = {
+    base: "24px 24px 24px 24px",
+    md: "32px 32px 32px 32px",
+    lg: "31px 31px 31px 18px",
+  },
+  imageLayout = "overlay",
 }: WelcomeSectionProps) {
   const router = useRouter();
 
@@ -71,76 +89,59 @@ export default function WelcomeSection({
     <Box
       bg={backgroundColor}
       borderRadius="20px"
-      p={{
-        base: "24px 24px 24px 24px",
-        md: "32px 32px 32px 32px",
-        lg: "31px 31px 31px 18px",
-      }}
+      p={p}
       position="relative"
       overflow="visible"
-      maxW={{ base: "100%", lg: "647px" }}
-      minH={{ base: "auto", lg: "231px" }}
-      mt={{ base: "80px", md: "0" }}
+      maxW={maxW}
+      minH={minH}
+      mt={mt}
     >
       <Flex
-        direction={{ base: "column", md: "row" }}
-        align={{ base: "center", md: "flex-start" }}
+        direction={{ base: "row", md: "row" }}
+        align={{ base: "center", md: "center" }}
         justify="space-between"
         position="relative"
+        gap={imageLayout === "inline" ? { base: 4, md: 4 } : 0}
       >
-        {/* Simbi Character - Mobile: Top (extending out), Desktop: Right */}
-        <Box
-          position="absolute"
-          right={characterPosition.right}
-          top={characterPosition.top}
-          transform={{
-            base:
-              characterPosition.top?.base === "50%"
-                ? "translateY(-50%)"
-                : "translateX(50%)",
-            md:
-              characterPosition.top?.md === "50%" ? "translateY(-50%)" : "none",
-            lg:
-              characterPosition.top?.lg === "50%" ? "translateY(-50%)" : "none",
-          }}
-          w={characterSize.w}
-          h={characterSize.h}
-          flexShrink={0}
-          pointerEvents="none"
-        >
-          <Image
-            src={characterImage}
-            alt="Simbi character"
-            fill
-            style={{ objectFit: "contain" }}
-            priority
-          />
-        </Box>
-
         {/* Left Content */}
         <Stack
-          gap={{ base: "16px", md: "20px", lg: "28px" }}
-          maxW={{ base: "100%", md: "55%", lg: "357px" }}
+          gap={{ base: "12px", md: "20px", lg: "28px" }}
+          maxW={
+            imageLayout === "inline"
+              ? "100%"
+              : { base: "100%", md: "55%", lg: "357px" }
+          }
           zIndex={1}
           w="100%"
-          pt={{ base: "120px", md: "0" }}
+          pt={
+            imageLayout === "overlay"
+              ? { base: "120px", md: "0" }
+              : { base: "0", md: "0" }
+          }
+          flex={imageLayout === "inline" ? 1 : undefined}
         >
           <Text
-            fontSize={{ base: "28px", md: "36px", lg: "40px" }}
+            fontSize={titleFontSize}
             fontWeight={600}
             color={textColor}
             lineHeight="1.5"
-            textAlign={{ base: "center", md: "left" }}
+            textAlign={{
+              base: imageLayout === "inline" ? "left" : "center",
+              md: imageLayout === "inline" ? "left" : "left",
+            }}
           >
             {title || defaultTitle}
           </Text>
 
           <Text
-            fontSize={{ base: "14px", md: "16px", lg: "18px" }}
+            fontSize={messageFontSize}
             fontWeight={500}
             color={textColor}
             lineHeight="1.5"
-            textAlign={{ base: "center", md: "left" }}
+            textAlign={{
+              base: imageLayout === "inline" ? "left" : "center",
+              md: imageLayout === "inline" ? "left" : "left",
+            }}
           >
             {message || defaultMessage}
           </Text>
@@ -162,6 +163,50 @@ export default function WelcomeSection({
             </Button>
           )}
         </Stack>
+
+        {/* Simbi Character */}
+        <Box
+          position={imageLayout === "overlay" ? "absolute" : "relative"}
+          right={imageLayout === "overlay" ? characterPosition.right : undefined}
+          top={imageLayout === "overlay" ? characterPosition.top : undefined}
+          transform={
+            imageLayout === "overlay"
+              ? {
+                  base:
+                    characterPosition.top?.base === "50%"
+                      ? "translateY(-50%)"
+                      : "translateX(50%)",
+                  md:
+                    characterPosition.top?.md === "50%"
+                      ? "translateY(-50%)"
+                      : "none",
+                  lg:
+                    characterPosition.top?.lg === "50%"
+                      ? "translateY(-50%)"
+                      : "none",
+                }
+              : undefined
+          }
+          w={characterSize.w}
+          h={characterSize.h}
+          flexShrink={0}
+          pointerEvents={imageLayout === "overlay" ? "none" : "auto"}
+          display={
+            imageLayout === "inline"
+              ? { base: "block", md: "block" } // Always show in inline mode
+              : { base: "block", md: "block" }
+          }
+          order={imageLayout === "inline" ? { base: 1, md: 1 } : undefined}
+          alignSelf={imageLayout === "inline" ? "center" : undefined}
+        >
+          <Image
+            src={characterImage}
+            alt="Simbi character"
+            fill
+            style={{ objectFit: "contain" }}
+            priority
+          />
+        </Box>
       </Flex>
     </Box>
   );
