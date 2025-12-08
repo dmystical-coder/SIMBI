@@ -3,6 +3,7 @@
 import { useRequireAuth } from "@/hooks/useAuth";
 import { Box, Text } from "@chakra-ui/react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MilestoneTracker from "@/components/dashboard/MilestoneTracker";
 
 export default function MilestonePage() {
   const { isLoading } = useRequireAuth();
@@ -20,12 +21,23 @@ export default function MilestonePage() {
     );
   }
 
+  const handleTabChange = (tab: "Active" | "Inactive" | "Completed") => {
+    console.log("Tab changed to:", tab);
+    // Add your tab change logic here
+  };
+
+  const handleFilterClick = () => {
+    console.log("Filter clicked");
+    // Add your filter logic here
+  };
+
   return (
     <DashboardLayout>
       <Box>
-        <Text fontSize="24px" fontWeight={600} color="#1e1e2f">
-          Milestones
-        </Text>
+        <MilestoneTracker
+          onTabChange={handleTabChange}
+          onFilterClick={handleFilterClick}
+        />
         {/* Milestone content will go here */}
       </Box>
     </DashboardLayout>
