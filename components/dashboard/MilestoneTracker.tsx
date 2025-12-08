@@ -45,7 +45,7 @@ export default function MilestoneTracker({
       >
         {/* Title */}
         <Text
-          fontSize={{ base: "22px", md: "24px" }}
+          fontSize={{ base: "20px", md: "24px" }}
           fontWeight={700}
           color="dark.950"
           lineHeight="1.2"
