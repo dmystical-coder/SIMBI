@@ -66,25 +66,31 @@ export default function MilestoneCard({
             Next: {nextTopic}
           </Text>
         </Box>
-        
+
         <Image src="/icons/more.svg" alt="More" cursor="pointer" />
       </Flex>
 
       {/* Progress Section */}
-      <Flex align="center" gap={3}>
+      <Flex direction="column" gap={2}>
         <Image
           src={getProgressIcon(progress)}
           alt="Progress"
-
+          w={{ base: "100%", md: "auto" }}
         />
-        <Box flex={1}>
-          <Text fontSize="12px" color="state.600" mb={1}>
+        <Flex
+          w="100%"
+          direction={{ base: "row", md: "row" }}
+          align={{ base: "center", md: "center" }}
+          justify={{ base: "space-between" }}
+          gap={{ base: 1, md: 3 }}
+        >
+          <Text fontSize="14px" color="state.600">
             Progress
           </Text>
           <Text fontSize="16px" fontWeight={600} color="dark.950">
             {progress}%
           </Text>
-        </Box>
+        </Flex>
       </Flex>
 
       {/* Bottom Section */}
@@ -92,13 +98,8 @@ export default function MilestoneCard({
         <Text fontSize="14px" color="state.700">
           {encouragement}
         </Text>
-        
-        <Flex
-          bg={getDaysLeftColor(daysLeft)}
-          px={3}
-          py={1}
-          borderRadius="12px"
-        >
+
+        <Flex bg={getDaysLeftColor(daysLeft)} px={3} py={1} borderRadius="12px">
           <Text
             fontSize="12px"
             fontWeight={500}
