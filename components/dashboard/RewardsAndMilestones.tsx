@@ -2,6 +2,7 @@
 
 import { Box, Text, Image } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   getStudyPlans,
   getStudySessions,
@@ -77,15 +78,32 @@ export default function RewardsAndMilestones() {
   };
   return (
     <Box>
-      <Text
-        className="sm:text[16px]"
-        fontSize="20px"
-        fontWeight={600}
-        color="rgba(30, 30, 47, 1)"
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
         mb="10px"
       >
-        Rewards and Milestones
-      </Text>
+        <Text
+          className="sm:text[16px]"
+          fontSize="20px"
+          fontWeight={600}
+          color="rgba(30, 30, 47, 1)"
+        >
+          Rewards and Milestones
+        </Text>
+        <Link href="/dashboard/milestone">
+          <Text
+            fontSize="14px"
+            fontWeight={500}
+            color="#7a5fff"
+            cursor="pointer"
+            _hover={{ textDecoration: "underline" }}
+          >
+            View All
+          </Text>
+        </Link>
+      </Box>
 
       <Box display="flex" flexWrap="wrap" gap="22.5px">
         {/* NFT Badge Card */}

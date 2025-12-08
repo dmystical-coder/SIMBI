@@ -32,6 +32,7 @@ const navItems: NavItem[] = [
     label: "Milestone",
     href: "/dashboard/milestone",
     icon: "/icons/milestone.svg",
+    showIndicator: true,
   },
   { label: "Rewards", href: "/dashboard/rewards", icon: "/icons/rewards.svg" },
   {
