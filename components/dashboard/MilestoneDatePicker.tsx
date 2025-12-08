@@ -51,15 +51,6 @@ export default function MilestoneDatePicker({
     onViewChange?.(newView);
   };
 
-  const isToday = () => {
-    const today = new Date();
-    return (
-      currentDate.getDate() === today.getDate() &&
-      currentDate.getMonth() === today.getMonth() &&
-      currentDate.getFullYear() === today.getFullYear()
-    );
-  };
-
   return (
     <Flex
       direction={{ base: "column", md: "row" }}
