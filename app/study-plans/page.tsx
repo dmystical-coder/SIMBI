@@ -1,336 +1,303 @@
-"use client"
+"use client";
 
+import { useState } from "react";
+import { useRequireAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import {
+  Avatar,
   Box,
   Button,
   Flex,
-  Grid,
+  Text,
   IconButton,
   Image,
   Input,
   InputGroup,
-  Link,
   Menu,
-  Avatar,
-  CloseButton,
-  Dialog,
-  Portal,
-  Text,
-  Field,
 } from "@chakra-ui/react";
-import {
-  FaBell,
-  FaRegBell,
-  FaSearch,
-  FaFilter,
-  FaRegCalendar,
-  FaTh,
-  FaChevronDown,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
-
-import { FiFilter } from "react-icons/fi";
-
+import { Sidebar } from "@/components/dashboard/Sidebar";
+import { UserDropdown } from "@/components/dashboard/UserDropdown";
+import { mockDashboardData } from "@/lib/mockData";
+import { NavItem } from "@/types/dashboard";
 import StudyModal from "../study-modal/StudyModal";
-
-import { usePathname } from "next/navigation";
-import NextLink from "next/link";
-
+import {
+  FaSearch,
+  FaChevronRight,
+  FaChevronLeft,
+  FaChevronDown,
+  FaTh,
+  FaRegCalendar,
+} from "react-icons/fa";
+import { FiFilter } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-
-type NavItem = {
-  label: string;
-  href: string;
-};
-
-const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Study plans", href: "/study-plans" },
-  { label: "Schedule", href: "/schedule" },
-  { label: "Milestone", href: "/milestone" },
-  { label: "Rewards", href: "/rewards" },
-  { label: "Let's Chat", href: "/chat" },
-  { label: "Log out", href: "/logout" },
-];
 
 const today = new Date().toLocaleDateString();
 
-
-
-export default function StudyPlans(){
-
+export default function DashboardPage() {
   const router = useRouter();
-  
-  const pathname = usePathname();
+
+  // Backend re-enabled
+  const { isLoading } = useRequireAuth();
+  const { user, logout } = useAuth();
+
+  const [activeNav, setActiveNav] = useState<NavItem>("dashboard");
+  const [showStreakAlert, setShowStreakAlert] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const dashboardUser = {
+    ...mockDashboardData.user,
+    firstName: user?.firstName || mockDashboardData.user.firstName,
+    lastName: user?.lastName || mockDashboardData.user.lastName,
+    email: user?.email || mockDashboardData.user.email,
+  };
+
+  if (isLoading) {
+    return (
+      <Flex h="100vh" align="center" justify="center">
+        <Text>Loading...</Text>
+      </Flex>
+    );
+  }
+
+  const handleLogout = () => logout();
 
   return (
-    
-    <Flex w="100%"  bg="#F8F7FF">
-      {/* SIDEBAR */}
-      <Flex
-        w={{base:"72%", lg:"18%"}}
-        bg="#1F125C"
-        color="white"
-        direction="column"
-        justify="space-between"
-        py={6}
-        fontSize="14px"
-      >
-        <Box width={{base:"100px", lg:"280px"}} height="48px" px={4}>
-          <Image
-          src="/logo-white.svg"
-          alt="SIMBI"
-          objectFit="contain"
-          />
-          </Box>
+    <Flex bg="#FAFAFA" minH="100vh" overflow="hidden">
+      {/* Sidebar */}
+      <Sidebar
+        activeItem={activeNav}
+        onNavigate={setActiveNav}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
-        <Flex direction="column" mt={10} gap={1}>
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-            <Link
-              as={NextLink}
-              key={item.label}
-              justifyContent="flex-start"
-              color={isActive ? "#FFD44D" : "white"}
-              fontWeight="500"
-              px={6}
-              mt={4}
-              borderRadius="0"
-              href={item.href}
-              _hover={{
-                color:"#FFD44D"
-              }}
-            >
-              {item.label}
-            </Link>
-          )
-          })}
+      {/* Main Content */}
+      <Box
+        ml={{ base: 0, lg: "222px" }}
+        flex={1}
+        p={{ base: 4, md: 6, lg: 8 }}
+        overflowX="hidden"
+        minW={0}
+      >
+        {/* Mobile Header */}
+        <Flex
+          display={{ base: "flex", lg: "none" }}
+          justify="space-between"
+          align="center"
+          mb={4}
+          minW={0}
+        >
+          <Image
+            src="/icons/menu.svg"
+            alt="Menu"
+            w="22px"
+            h="24px"
+            cursor="pointer"
+            onClick={() => setSidebarOpen(true)}
+          />
+
+          <UserDropdown
+            user={dashboardUser}
+            notifications={1}
+            onUpgrade={() => console.log("Upgrade")}
+            onCustomize={() => console.log("Customize")}
+            onLogout={handleLogout}
+          />
         </Flex>
 
-        <Image
-        mt={{base:20, lg:36}}
-        mb={4}
-        mx="auto"
-        boxSize="170px"
-        src={"/simbi-dashboard.svg"}
-        objectFit="contain"
-        />
-
-        {/* Upgrade panel */}
-        {/* <Flex direction="column" px={6} mt={8} mb={4} gap={3}> */}
-          <Box
-            bg="blue.900"
-            m={4}
-            p={2}
-            gap={2}
-            borderRadius="18px"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            textAlign="center"
-            // gap={3}
+        {/* MAIN WRAPPER */}
+        <Flex flexDirection="column" py={4} px={{ base: 4, lg: 8 }} minW={0}>
+          {/* TOP BAR */}
+          <Flex
+            justify="space-between"
+            align="center"
+            flexDirection={{ base: "column", lg: "row" }}
+            flexWrap="wrap"
+            gap={4}
+            minW={0}
           >
-            <Text color="#FFD44D">Upgrade your plan</Text>
-            
-            <Text fontSize="12px">Connect telegram bots, wallets, join study groups.</Text>
-
-            <Button bg="#2AABEE" color="white" borderRadius="xl">
-            Sync Telegram
-          </Button>
-          </Box>
-
-          
-        {/* </Flex> */}
-      </Flex>
-
-      {/* MAIN */}
-
-      <Flex flex={1} flexDirection="column" py={4} px={{base:4, lg:8}}>
-
-        {/* TOP BAR */}
-
-        
-        <Flex justify="space-between" align="center" flexDirection={{base:"column", lg:"row"}}>
-            {/* Search */}
-            <Box  order={{base:2, lg:1}} w={{base:"320px", lg:"370px"}}>
-              <InputGroup endElement={<FaSearch/>}  h="48px">
-                <Input placeholder="Search" bg="white" borderRadius="10px"/>
-              </InputGroup>
-            </Box>
+            {/* Desktop Search */}
+            <Flex
+              align="center"
+              gap={3}
+              border="1px solid #A5A0BE"
+              borderRadius="6px"
+              px={4}
+              py={3}
+              bg="#FFFFFF"
+              display={{ base: "none", lg: "flex" }}
+              flexShrink={1}
+              minW={0}
+            >
+              <Input
+                placeholder="Search"
+                border="none"
+                fontSize="16px"
+                color="#C9C0D4"
+                _placeholder={{ color: "#C9C0D4" }}
+                _focus={{ outline: "none", boxShadow: "none" }}
+                minW={0}
+              />
+              <Image src="/icons/search.svg" alt="Search" w="10px" h="10px" />
+            </Flex>
 
             {/* Notifications + Profile */}
-            <Flex align="center" gap={8} order={{base:1, lg:2}}>
-            <IconButton
-              aria-label="Notifications"
-              variant="ghost"
+            <Flex
+              align="center"
+              gap={6}
+              minW={0}
+              flexShrink={1}
+              display={{ base: "none", lg: "block" }}
             >
-                <FaRegBell />
-            </IconButton>
-
-            {/* Profile menu using Menu.Root, Menu.Trigger, Menu.Content */}
-            <Menu.Root>
-              <Menu.Trigger>
-                <Flex align="center" gap={3} cursor="pointer" bg="#E4DFFF" h={{base:"40px", lg:"60px"}} w={{base:"170px", lg:"240px"}} borderRadius="xl">
-                    <Avatar.Root size="sm">
-                        <Avatar.Fallback name="Grace Fernandes" />
-                        <Avatar.Image src="/avatar.png" />
-                    </Avatar.Root>
-                  <Flex direction="column" align="flex-start">
-                    <Text fontSize="14px" fontWeight="600">Grace Fernandes</Text>
-                    <Text fontSize="12px" color="#9385FF">
-                      Basic Plan
-                    </Text>
-                  </Flex>
-                  <FaChevronDown/>
-                </Flex>
-              </Menu.Trigger>
-
-              <Menu.Content bg="white" shadow="md" minW="150px">
-                <Menu.Item value="profile">Profile</Menu.Item>
-                <Menu.Item value="logout">Logout</Menu.Item>
-              </Menu.Content>
-            </Menu.Root>
+              <UserDropdown
+                user={dashboardUser}
+                notifications={1}
+                onUpgrade={() => console.log("Upgrade")}
+                onCustomize={() => console.log("Customize")}
+                onLogout={handleLogout}
+              />
             </Flex>
-        </Flex>
+          </Flex>
 
-        {/* SECOND BAR */}
-
-        <Flex mt={10} w="100%" align="center" justify="space-between" fontSize="14px">
-          <Flex direction="column" gap={5} w="100%">
-            {/* Tabs */}
-            <Flex align="center" justify="space-between" borderBottom="1px solid #C9C0D4">
-              {/* Left section */}
-              <Flex align="center" gap={8}>
-                <Menu.Root>
-                  <Menu.Trigger>
-                    <Button
-                      variant="ghost"
-                      fontWeight="600"
-                      fontSize="24px"
-                    >
-                      Study Plans
-                      <FaChevronDown />
-                    </Button>
-                  </Menu.Trigger>
-                  <Menu.Content>
-                    <Menu.Item value="study plans">Study Plans</Menu.Item>
-                    <Menu.Item value="study tracker">Study Tracker</Menu.Item>
-                  </Menu.Content>
-                </Menu.Root>
-
-                <Button
-                  variant="ghost"
-                  borderBottom="3px solid #7A5FFF"
-                  borderRadius="0"
-                  pb={2}
-                  color="#7A5FFF"
-                  fontWeight="400"
-                >
-                  Study Plans
-                </Button>
-
-                <Button 
-                  variant="ghost"
-                  pb={2}
-                  fontWeight="400">
-                  Study Plan Tracker
-                </Button>
-              </Flex>
-
-              {/* Right controls */}
-              <Flex align="center" gap={3} mb={1}>
-                <Button
-                  border="1px solid #7A5FFF"
-                  bg="transparent"
-                  color="#7A5FFF"
-                >
-                  
-                  <FiFilter />  
-                  Filter
-                </Button>
-
-                <Button bg="#9566FF" color="white" onClick={() =>
-                  router.push("/study-session")
-                }>
-                  Start a Study Session
-                </Button>
-              </Flex>
-            </Flex>
-
-            {/* Date control */}
-            <Flex justify="space-between">
-              
-            <Flex align="center" gap={4}>
+          {/* SECOND BAR */}
+          <Flex mt={10} w="100%" align="center" justify="space-between" minW={0}>
+            <Flex direction="column" gap={5} w="100%" minW={0}>
+              {/* Tabs */}
               <Flex
                 align="center"
-                gap={3}
-                p={2}
-                px={4}
-                border="none"
+                justify="space-between"
+                borderBottom="1px solid #C9C0D4"
+                flexWrap="wrap"
+                minW={0}
               >
-                <FaRegCalendar color="#9566FF" />
-                <Text fontSize="18px" fontWeight="500" color="#9566FF">{today}</Text>
-                <FaChevronDown />
+                <Flex align="center" gap={6} flexWrap="wrap" minW={0}>
+                  <Menu.Root>
+                    <Menu.Trigger>
+                      <Button variant="ghost" fontWeight="600" fontSize="24px">
+                        Study Plans
+                        <FaChevronDown />
+                      </Button>
+                    </Menu.Trigger>
+                    <Menu.Content>
+                      <Menu.Item value="study plans">Study Plans</Menu.Item>
+                      <Menu.Item value="study tracker">
+                        Study Tracker
+                      </Menu.Item>
+                    </Menu.Content>
+                  </Menu.Root>
+
+                  <Button
+                    variant="ghost"
+                    borderBottom="3px solid #7A5FFF"
+                    borderRadius="0"
+                    pb={2}
+                    color="#7A5FFF"
+                  >
+                    Study Plans
+                  </Button>
+
+                  <Button variant="ghost" pb={2}>
+                    Study Plan Tracker
+                  </Button>
+                </Flex>
+
+                {/* Right Controls */}
+                <Flex align="center" gap={3} mb={1} flexWrap="wrap" minW={0}>
+                  <Button
+                    border="1px solid #7A5FFF"
+                    bg="transparent"
+                    color="#7A5FFF"
+                  >
+                    <FiFilter />
+                    Filter
+                  </Button>
+
+                  <Button
+                    bg="#9566FF"
+                    color="white"
+                    onClick={() => router.push("/study-session")}
+                  >
+                    Start a Study Session
+                  </Button>
+                </Flex>
               </Flex>
 
-              <Flex gap={2}>
-                <IconButton
-              aria-label="Next"
-              size="xs"
-              bgColor="pink.100">
-                <FaChevronLeft color="#9566FF" />
-              </IconButton>
+              {/* Date Control */}
+              <Flex justify="space-between" flexWrap="wrap" gap={4} minW={0}>
+                <Flex align="center" gap={4} flexWrap="wrap" minW={0}>
+                  <Flex align="center" gap={3} p={2} px={4}>
+                    <FaRegCalendar color="#9566FF" />
+                    <Text fontSize="18px" fontWeight="500" color="#9566FF">
+                      {today}
+                    </Text>
+                    <FaChevronDown />
+                  </Flex>
 
-              <Text bg="#9566FF" color="white" p={2} borderRadius="lg">
-                Today
-              </Text>
+                  <Flex gap={2} align="center">
+                    <IconButton aria-label="Prev" size="xs" bgColor="pink.100">
+                      <FaChevronLeft color="#9566FF" />
+                    </IconButton>
 
-              <IconButton
-              aria-label="Next"
-              size="xs"
-              bgColor="pink.100">
-                <FaChevronRight  color="#9566FF"/>
-              </IconButton>
+                    <Text bg="#9566FF" color="white" p={2} borderRadius="lg">
+                      Today
+                    </Text>
+
+                    <IconButton aria-label="Next" size="xs" bgColor="pink.100">
+                      <FaChevronRight color="#9566FF" />
+                    </IconButton>
+                  </Flex>
+                </Flex>
+
+                <Flex flexShrink={0}>
+                  <IconButton
+                    aria-label="Calendar"
+                    size="xs"
+                    variant="outline"
+                    borderRightRadius="none"
+                  >
+                    <FaRegCalendar color="#9566FF" />
+                  </IconButton>
+
+                  <IconButton
+                    aria-label="Grid"
+                    size="xs"
+                    variant="outline"
+                    borderLeftRadius="none"
+                  >
+                    <FaTh />
+                  </IconButton>
+                </Flex>
               </Flex>
-
             </Flex>
+          </Flex>
 
-            <Flex >
-              <IconButton aria-label="Calendar" size="xs" variant="outline" borderRightRadius="none">
-                    <FaRegCalendar  color="#9566FF"/>
-                </IconButton>
-                    
-                <IconButton aria-label="Grid" size="xs" variant="outline" borderLeftRadius="none">
-                  <FaTh />
-                </IconButton>
-            </Flex> 
-            </Flex>
+          {/* EMPTY STATE */}
+          <Flex
+            flex={1}
+            direction="column"
+            align="center"
+            justify="center"
+            mt={20}
+            minW={0}
+          >
+            <Image
+              boxSize={{ base: "200px", lg: "320px" }}
+              src={"/simbi-sad.png"}
+              objectFit="contain"
+            />
 
-            
+            <Text fontSize="32px" fontWeight="700" mt={6}>
+              No Study Plan created Yet
+            </Text>
+
+            <Text color="gray.500" fontSize="20px" m={2} mb={8}>
+              Generate a study plan to get started
+            </Text>
+
+            <StudyModal />
           </Flex>
         </Flex>
-
-        <Flex flex={1} direction="column" align="center" justify="center" mt={20}>
-
-          <Image
-            boxSize={{base:"200px", lg:"320px"}}
-            src={"/simbi-sad.png"}
-            objectFit="contain"
-          />
-
-          <Text fontSize="32px" fontWeight="700" mt={6}>
-            No Study Plan created Yet
-          </Text>
-
-          <Text color="gray.500" fontSize="20px" m={2} mb={8}>
-            Generate a study plan to get started
-          </Text>
-            <StudyModal/>
-        </Flex>
-      </Flex>
+      </Box>
     </Flex>
-  )
+  );
 }
