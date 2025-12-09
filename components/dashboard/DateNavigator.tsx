@@ -14,6 +14,7 @@ interface DateNavigatorProps {
   showDatePicker?: boolean;
   customTitle?: string;
   showTodayButton?: boolean;
+  step?: "day" | "week" | "month";
 }
 
 export default function DateNavigator({
@@ -54,12 +55,19 @@ export default function DateNavigator({
   showDatePicker = true,
   customTitle,
   showTodayButton = true,
+  step = "day",
 }: DateNavigatorProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<ViewType>(viewOptions[0].value);
 
   const formatDate = (date: Date) => {
     if (dateFormat === "short") {
+      if (step === "month") {
+        return date.toLocaleDateString("en-GB", {
+          month: "short",
+          year: "numeric",
+        });
+      }
       return date.toLocaleDateString("en-GB", {
         day: "numeric",
         month: "short",
@@ -75,14 +83,18 @@ export default function DateNavigator({
 
   const handlePrevious = () => {
     const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() - 1);
+    if (step === "day") newDate.setDate(newDate.getDate() - 1);
+    if (step === "week") newDate.setDate(newDate.getDate() - 7);
+    if (step === "month") newDate.setMonth(newDate.getMonth() - 1);
     setCurrentDate(newDate);
     onDateChange?.(newDate);
   };
 
   const handleNext = () => {
     const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + 1);
+    if (step === "day") newDate.setDate(newDate.getDate() + 1);
+    if (step === "week") newDate.setDate(newDate.getDate() + 7);
+    if (step === "month") newDate.setMonth(newDate.getMonth() + 1);
     setCurrentDate(newDate);
     onDateChange?.(newDate);
   };
