@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { useRequireAuth } from "@/hooks/useAuth";
 import { Box, Text, Flex, Button, Tabs, Image } from "@chakra-ui/react";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import DateNavigator from "@/components/dashboard/DateNavigator";
 import DailyScheduleView from "@/components/dashboard/DailyScheduleView";
 import WeeklyScheduleView from "@/components/dashboard/WeeklyScheduleView";
 import MonthlyScheduleView from "@/components/dashboard/MonthlyScheduleView";
 import ChatBubble from "@/components/dashboard/ChatBubble";
+import { ScheduleSkeleton } from "@/components/shared/PageSkeleton";
 
 type ScheduleView = "daily" | "weekly" | "monthly";
 type CalendarView = "calendar" | "grid" | "list";
@@ -20,16 +21,7 @@ export default function SchedulePage() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        minH="100vh"
-      >
-        <Text>Loading...</Text>
-      </Box>
-    );
+    return <ScheduleSkeleton />;
   }
 
   const handleDateChange = (date: Date) => {

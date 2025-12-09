@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Text, Stack } from "@chakra-ui/react";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
 export default function ChatPage() {
   return (
@@ -24,4 +24,3 @@ export default function ChatPage() {
     </DashboardLayout>
   );
 }
-

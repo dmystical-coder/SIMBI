@@ -80,8 +80,7 @@ export default function WelcomeSection({
     } else if (showPreAssessmentPrompt) {
       router.push("/pre-assessment");
     } else {
-      // TODO: Navigate to study plan generation
-      console.log("Generate study plan");
+      router.push("/study-plans");
     }
   };
 
@@ -167,7 +166,9 @@ export default function WelcomeSection({
         {/* Simbi Character */}
         <Box
           position={imageLayout === "overlay" ? "absolute" : "relative"}
-          right={imageLayout === "overlay" ? characterPosition.right : undefined}
+          right={
+            imageLayout === "overlay" ? characterPosition.right : undefined
+          }
           top={imageLayout === "overlay" ? characterPosition.top : undefined}
           transform={
             imageLayout === "overlay"

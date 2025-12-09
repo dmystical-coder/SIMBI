@@ -28,7 +28,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
   },
   {
     id: "2",
-    content: "Milestone unlocked! You've officially entered the 'I'm serious about this' zone.",
+    content: "Milestone unlocked! You&apos;ve officially entered the &apos;I&apos;m serious about this&apos; zone.",
     time: "Wednesday at 9:42 AM",
     isRead: false,
     type: "milestone",
@@ -149,6 +149,7 @@ export default function NotificationDrawer({ children }: NotificationDrawerProps
                   </Text>
                   <Image
                     src="/check.svg"
+                    alt="Check mark"
                     w="16px"
                     h="16px"
                     style={{
@@ -210,7 +211,7 @@ export default function NotificationDrawer({ children }: NotificationDrawerProps
                     No notifications yet
                   </Text>
                   <Text fontSize="14px" color="#667085" maxW="280px" lineHeight="1.5">
-                    We'll let you know when we've got something new for you.
+                    We&apos;ll let you know when we&apos;ve got something new for you.
                   </Text>
                 </Flex>
               ) : (
@@ -264,7 +265,8 @@ export default function NotificationDrawer({ children }: NotificationDrawerProps
                                      flexShrink={0}
                                    >
                                        <Image 
-                                         src="/check.svg" 
+                                         src="/check.svg"
+                                         alt="Mark as read" 
                                          w="18px" 
                                          h="18px" 
                                          style={{ filter: "brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(543%) hue-rotate(182deg) brightness(93%) contrast(88%)" }}
