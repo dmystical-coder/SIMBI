@@ -61,24 +61,59 @@ export default function DateNavigator({
   const [view, setView] = useState<ViewType>(viewOptions[0].value);
 
   const formatDate = (date: Date) => {
-    if (dateFormat === "short") {
-      if (step === "month") {
-        return date.toLocaleDateString("en-GB", {
-          month: "short",
-          year: "numeric",
-        });
-      }
-      return date.toLocaleDateString("en-GB", {
-        day: "numeric",
+    if (step === "month") {
+      // e.g. "Dec, 2025"
+      return date.toLocaleDateString("en-US", {
         month: "short",
         year: "numeric",
       });
     }
+
+    if (step === "week") {
+      // e.g. "7 - 13 Dec 2025"
+      const startOfWeek = new Date(date);
+      const day = startOfWeek.getDay(); // 0 = Sunday
+      // Adjust to Monday start or leave as Sunday start? Assuming Sunday based on other components
+      const diff = startOfWeek.getDate() - day; 
+      startOfWeek.setDate(diff);
+
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+      // Helper for day part
+      const d1 = startOfWeek.getDate();
+      const d2 = endOfWeek.getDate();
+      const m1 = startOfWeek.toLocaleDateString("en-US", { month: "short" });
+      const m2 = endOfWeek.toLocaleDateString("en-US", { month: "short" });
+      const y1 = startOfWeek.getFullYear();
+      const y2 = endOfWeek.getFullYear();
+
+      if (y1 !== y2) {
+        return `${d1} ${m1} ${y1} - ${d2} ${m2} ${y2}`;
+      }
+      if (m1 !== m2) {
+        return `${d1} ${m1} - ${d2} ${m2} ${y1}`;
+      }
+      return `${d1} - ${d2} ${m1} ${y1}`;
+    }
+
+    // Default "day" (e.g. "Mon, 9 Dec 2025")
     return date.toLocaleDateString("en-GB", {
+      weekday: "short",
       day: "numeric",
-      month: "long",
+      month: "short",
       year: "numeric",
     });
+  };
+
+  const getTodayButtonText = () => {
+    if (step === "month") {
+      return new Date().toLocaleDateString("en-US", { month: "long" });
+    }
+    if (step === "week") {
+      return "This Week";
+    }
+    return "Today";
   };
 
   const handlePrevious = () => {
@@ -161,7 +196,7 @@ export default function DateNavigator({
             color="brand.600"
             lineHeight="1"
           >
-            {customTitle || `Today, ${formatDate(currentDate)}`}
+            {customTitle || formatDate(currentDate)}
           </Text>
 
           {/* Dropdown Arrow */}
@@ -229,7 +264,7 @@ export default function DateNavigator({
               _active={{ bg: "brand.800" }}
               h="auto"
             >
-              Today
+              {getTodayButtonText()}
             </Button>
           )}
 
