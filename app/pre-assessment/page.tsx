@@ -346,7 +346,7 @@ export default function PreAssessment() {
       type: "info",
     });
 
-    router.push("/dashboard");
+          router.push("/");
   };
 
   return (

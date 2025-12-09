@@ -87,7 +87,7 @@ export default function SignInPage() {
         router.push("/pre-assessment");
       } else {
         // Otherwise go to dashboard (whether they completed it or skipped it)
-        router.push("/dashboard");
+        router.push("/");
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);

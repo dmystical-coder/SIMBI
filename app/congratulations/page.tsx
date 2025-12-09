@@ -9,7 +9,7 @@ export default function Congratulations() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push("/dashboard");
+      router.push("/");
     }, 5000);
 
     return () => clearTimeout(timer);
@@ -87,7 +87,7 @@ export default function Congratulations() {
             You will be redirected to our homepage shortly.
           </Text>
           <Link
-            href="/dashboard"
+            href="/"
             fontSize={{ base: "14px", lg: "16px" }}
             fontWeight="500"
             color="#000000"

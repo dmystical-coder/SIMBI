@@ -92,7 +92,7 @@ export default function RewardsAndMilestones() {
         >
           Rewards and Milestones
         </Text>
-        <Link href="/dashboard/milestone">
+        <Link href="/milestone">
           <Text
             fontSize="14px"
             fontWeight={500}

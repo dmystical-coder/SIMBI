@@ -3,27 +3,19 @@
 import { useState } from "react";
 import { useRequireAuth } from "@/hooks/useAuth";
 import { Box, Text, Flex, Image } from "@chakra-ui/react";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import MilestoneTracker from "@/components/dashboard/MilestoneTracker";
 import MilestoneLibrary from "@/components/dashboard/MilestoneLibrary";
 import MilestoneDatePicker, { ViewType } from "@/components/dashboard/MilestoneDatePicker";
 import ChatBubble from "@/components/dashboard/ChatBubble";
+import { MilestoneSkeleton } from "@/components/shared/PageSkeleton";
 
 export default function MilestonePage() {
   const { isLoading } = useRequireAuth();
   const [activeTab, setActiveTab] = useState<"Library" | "Tracker">("Tracker");
 
   if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        minH="100vh"
-      >
-        <Text>Loading...</Text>
-      </Box>
-    );
+    return <MilestoneSkeleton />;
   }
 
   const handleDateChange = (date: Date) => {

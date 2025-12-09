@@ -104,18 +104,12 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
         <Box display="flex" alignItems="center" gap="16px">
           {/* Notification Icon */}
           <NotificationDrawer>
-            <Box position="relative" cursor="pointer" w="26px" h="26px">
-              <Image
-                src="/icons/bell.svg"
-                alt="Notifications"
-                w="24px"
-                h="24px"
-                position="absolute"
-                left="3px"
-                top="3.5px"
-              />
-
-            </Box>
+            <Image
+              src="/icons/bell.svg"
+              alt="Notifications"
+              w="24px"
+              h="24px"
+            />
           </NotificationDrawer>
 
           {/* User Profile with Dropdown Menu */}

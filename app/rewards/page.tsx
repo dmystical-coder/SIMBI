@@ -2,22 +2,14 @@
 
 import { useRequireAuth } from "@/hooks/useAuth";
 import { Box, Text } from "@chakra-ui/react";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import { GenericPageSkeleton } from "@/components/shared/PageSkeleton";
 
 export default function RewardsPage() {
   const { isLoading } = useRequireAuth();
 
   if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        minH="100vh"
-      >
-        <Text>Loading...</Text>
-      </Box>
-    );
+    return <GenericPageSkeleton />;
   }
 
   return (

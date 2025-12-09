@@ -13,8 +13,9 @@ import {
   Grid,
   GridItem,
 } from "@chakra-ui/react";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import StudyModal from "@/app/study-modal/StudyModal";
+import { GenericPageSkeleton } from "@/components/shared/PageSkeleton";
 import {
   FaChevronRight,
   FaChevronLeft,
@@ -87,16 +88,7 @@ export default function StudyPlansPage() {
   const [hasPlans, setHasPlans] = useState(false);
 
   if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        minH="100vh"
-      >
-        <Text>Loading...</Text>
-      </Box>
-    );
+    return <GenericPageSkeleton />;
   }
 
   const handlePlanCreated = () => {
