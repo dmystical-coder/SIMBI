@@ -83,9 +83,25 @@ export default function MonthlyScheduleView({
       borderRadius="12px"
       border="1px solid"
       borderColor="#E4E7EC"
-      overflow="hidden"
+      overflowX="auto"
+      css={{
+        "&::-webkit-scrollbar": {
+          height: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#D0D5DD",
+          borderRadius: "3px",
+        },
+      }}
     >
-      <Grid templateColumns="repeat(7, 1fr)" gap="1px" bg="#E4E7EC">
+      <Grid 
+        templateColumns={{ base: "repeat(7, minmax(100px, 1fr))", md: "repeat(7, 1fr)" }} 
+        gap="1px" 
+        bg="#E4E7EC"
+      >
         {weekDays.map((day) => (
           <Box key={day} bg="white" p={4} textAlign="center">
             <Text fontSize="14px" fontWeight={600} color="#101828">

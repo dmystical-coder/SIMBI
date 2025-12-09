@@ -97,11 +97,24 @@ export default function WeeklyScheduleView({
       borderRadius="12px"
       border="1px solid #E4E7EC"
       p={6}
+      overflowX="auto"
+      css={{
+        "&::-webkit-scrollbar": {
+          height: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#D0D5DD",
+          borderRadius: "3px",
+        },
+      }}
     >
       {/* Week Grid */}
       <Grid
         templateColumns={{
-          base: "repeat(7, 1fr)",
+          base: "repeat(7, minmax(100px, 1fr))",
           md: "repeat(7, 1fr)",
         }}
         gap={4}
