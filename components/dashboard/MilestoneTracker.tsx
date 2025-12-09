@@ -1,124 +1,144 @@
 "use client";
 
-import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import { Box, Flex, Text, Image, Grid } from "@chakra-ui/react";
 import { useState } from "react";
+import MilestoneCard from "./MilestoneCard";
+import SimbiPepTalk from "./SimbiPepTalk";
+import ScoreCard from "./ScoreCard";
+import MilestoneRewardCard from "./MilestoneRewardCard";
 
-type TabType = "Active" | "Inactive" | "Completed";
+// Sample active milestones (This should eventually come from props or API)
+const ACTIVE_MILESTONES = [
+  {
+    subject: "Reading - Chemistry",
+    nextTopic: "Study atomic Structure",
+    progress: 40,
+    encouragement: "Keep up the good work!",
+    daysLeft: 10,
+    backgroundColor: "brand.50",
+  },
+  {
+    subject: "Reading - Mathematics",
+    nextTopic: "Study Calculus",
+    progress: 10,
+    encouragement: "Ghosting Math? Rude",
+    daysLeft: 10,
+    backgroundColor: "success.50",
+  },
+  {
+    subject: "Reading - Biology",
+    nextTopic: "Study Human Digestive System",
+    progress: 60,
+    encouragement: "Study now, flex later",
+    daysLeft: 10,
+    backgroundColor: "anonYellow.50",
+  },
+  {
+    subject: "Reading - Physics",
+    nextTopic: "Study Thermodynamics",
+    progress: 90,
+    encouragement: "Okay now I'm impressed",
+    daysLeft: 1,
+    backgroundColor: "secondary.50",
+  },
+];
 
-interface MilestoneTrackerProps {
-  onTabChange?: (tab: TabType) => void;
-  onFilterClick?: () => void;
-}
-
-export default function MilestoneTracker({
-  onTabChange,
-  onFilterClick,
-}: MilestoneTrackerProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("Active");
-
-  const tabs: TabType[] = ["Active", "Inactive", "Completed"];
-
-  const handleTabClick = (tab: TabType) => {
-    setActiveTab(tab);
-    onTabChange?.(tab);
-  };
-
+export default function MilestoneTracker() {
   return (
-    <Flex
-      className="w-full"
-      position="relative"
-      borderBottom="1px solid"
-      borderColor="state.200"
-      pb={2}
-      direction={{ base: "column", md: "row" }}
-      justify={{ base: "flex-start", md: "space-between" }}
-      align={{ base: "flex-start", md: "center" }}
-      gap={{ base: 4, md: 0 }}
-    >
-      {/* Left section: Title and Tabs */}
-      <Flex
-        direction={{ base: "column", md: "row" }}
-        align={{ base: "flex-start", md: "center" }}
-        gap={{ base: 4, md: 12 }}
-        w={{ base: "full", md: "auto" }}
-        pr={{ base: "120px", md: 0 }}
-      >
-        {/* Title */}
-        <Text
-          fontSize={{ base: "20px", md: "24px" }}
-          fontWeight={700}
-          color="dark.950"
-          lineHeight="1.2"
-        >
-          Milestone Tracker
-        </Text>
+    <Box>
+      <Grid templateColumns={{ base: "1fr", lg: "1fr 350px" }} gap={6}>
+        {/* Left Column */}
+        <Flex direction="column" gap={6}>
+          {/* Active Milestones Grid */}
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+            gap={4}
+          >
+            {ACTIVE_MILESTONES.map((milestone, index) => (
+              <MilestoneCard key={index} {...milestone} />
+            ))}
+          </Grid>
 
-        {/* Tabs */}
-        <Flex gap={0} align="stretch">
-          {tabs.map((tab) => (
-            <Flex
-              key={tab}
-              position="relative"
-              px={{ base: 0, md: 4 }}
-              pr={{ base: 6, md: 4 }}
-              py={{ base: 2, md: 4 }}
-              cursor="pointer"
-              onClick={() => handleTabClick(tab)}
-              align="center"
-              className="transition-all duration-200"
+          {/* Mobile: Pep Talk and Score Card */}
+          <Flex
+            direction="column"
+            gap={6}
+            display={{ base: "flex", lg: "none" }}
+          >
+            <SimbiPepTalk />
+            <ScoreCard />
+          </Flex>
+
+          {/* Upcoming Milestones Section */}
+          <Box>
+            <Text fontSize="24px" fontWeight={600} color="dark.950" mb={4}>
+              Upcoming Milestones
+            </Text>
+            <Grid
+              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+              gap={4}
             >
-              <Text
-                fontSize={{ base: "16px", md: "14px" }}
-                fontWeight={activeTab === tab ? 500 : 400}
-                color={activeTab === tab ? "brand.600" : "state.500"}
-                className="whitespace-nowrap hover:opacity-80"
-                lineHeight="1"
-              >
-                {tab}
-              </Text>
-              {/* Active indicator - embedded in border */}
-              {activeTab === tab && (
-                <Box
-                  position="absolute"
-                  bottom="-10px"
-                  left={0}
-                  right={{ base: "24px", md: 0 }}
-                  h="3px"
-                  bg="brand.600"
-                  zIndex={1}
-                />
-              )}
-            </Flex>
-          ))}
-        </Flex>
-      </Flex>
+              <MilestoneRewardCard
+                icon="/trophy.svg"
+                title="7 days Study Streak"
+                description="Complete 7 consecutive days of study"
+                tokens={20}
+                progress="5/7 days"
+                variant="upcoming"
+                tokenPrefix=""
+              />
+              <MilestoneRewardCard
+                icon="/starred.svg"
+                title="Pomodoro Session"
+                description="Complete 5 sessions in one day"
+                tokens={10}
+                progress="3/5 done"
+                variant="upcoming"
+                tokenPrefix=""
+              />
+            </Grid>
+          </Box>
 
-      {/* Filter Button - Top Right on Mobile, Right Side on Desktop */}
-      <Flex
-        position={{ base: "absolute", md: "static" }}
-        top={{ base: 0, md: "auto" }}
-        right={{ base: 0, md: "auto" }}
-        align="center"
-        gap={2}
-        px={4}
-        py={2}
-        border="1px solid"
-        borderColor="brand.600"
-        borderRadius="8px"
-        cursor="pointer"
-        onClick={onFilterClick}
-        bg="white"
-        className="hover:bg-brand-50 transition-colors duration-200"
-      >
-        <Image
-          src="/icons/funnel.svg"
-          alt="Filter"
-          className="w-4 h-4"
-        />
-        <Text fontSize="14px" fontWeight={500} color="brand.600" lineHeight="1">
-          Filter
-        </Text>
-      </Flex>
-    </Flex>
+          {/* Earned Milestones Section */}
+          <Box>
+            <Text fontSize="24px" fontWeight={600} color="dark.950" mb={4}>
+              Earned Milestones
+            </Text>
+            <Grid
+              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+              gap={4}
+            >
+              <MilestoneRewardCard
+                icon="/trophy.svg"
+                title="3 days Study Streak"
+                description="3 consecutive days of study completed"
+                tokens={10}
+                progress="3/3 days"
+                variant="earned"
+              />
+              <MilestoneRewardCard
+                icon="/clock.svg"
+                title="Time Master lvl 1"
+                description="Shockingly... you did it!"
+                tokens={15}
+                progress="10 hours"
+                variant="earned"
+              />
+            </Grid>
+          </Box>
+        </Flex>
+
+        {/* Right Sidebar - Desktop only */}
+        <Flex
+          direction="column"
+          gap={6}
+          display={{ base: "none", lg: "flex" }}
+        >
+          <SimbiPepTalk />
+          <ScoreCard />
+        </Flex>
+      </Grid>
+    </Box>
   );
 }
+

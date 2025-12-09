@@ -1,17 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { useRequireAuth } from "@/hooks/useAuth";
-import { Box, Text, Grid, Flex } from "@chakra-ui/react";
+import { Box, Text, Flex, Image } from "@chakra-ui/react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MilestoneTracker from "@/components/dashboard/MilestoneTracker";
+import MilestoneLibrary from "@/components/dashboard/MilestoneLibrary";
 import MilestoneDatePicker, { ViewType } from "@/components/dashboard/MilestoneDatePicker";
-import MilestoneCard from "@/components/dashboard/MilestoneCard";
-import SimbiPepTalk from "@/components/dashboard/SimbiPepTalk";
-import ScoreCard from "@/components/dashboard/ScoreCard";
-import MilestoneRewardCard from "@/components/dashboard/MilestoneRewardCard";
+import ChatBubble from "@/components/dashboard/ChatBubble";
 
 export default function MilestonePage() {
   const { isLoading } = useRequireAuth();
+  const [activeTab, setActiveTab] = useState<"Library" | "Tracker">("Tracker");
 
   if (isLoading) {
     return (
@@ -26,14 +26,6 @@ export default function MilestonePage() {
     );
   }
 
-  const handleTabChange = (tab: "Active" | "Inactive" | "Completed") => {
-    console.log("Tab changed to:", tab);
-  };
-
-  const handleFilterClick = () => {
-    console.log("Filter clicked");
-  };
-
   const handleDateChange = (date: Date) => {
     console.log("Date changed to:", date);
   };
@@ -42,165 +34,128 @@ export default function MilestonePage() {
     console.log("View changed to:", view);
   };
 
-  // Sample milestone data
-  const activeMilestones = [
-    {
-      subject: "Reading - Chemistry",
-      nextTopic: "Study atomic Structure",
-      progress: 40,
-      encouragement: "Keep up the good work!",
-      daysLeft: 10,
-      backgroundColor: "brand.50",
-    },
-    {
-      subject: "Reading - Mathematics",
-      nextTopic: "Study Calculus",
-      progress: 10,
-      encouragement: "Ghosting Math? Rude",
-      daysLeft: 10,
-      backgroundColor: "success.50",
-    },
-    {
-      subject: "Reading - Biology",
-      nextTopic: "Study Human Digestive System",
-      progress: 60,
-      encouragement: "Study now, flex later",
-      daysLeft: 10,
-      backgroundColor: "anonYellow.50",
-    },
-    {
-      subject: "Reading - Physics",
-      nextTopic: "Study Thermodynamics",
-      progress: 90,
-      encouragement: "Okay now I'm impressed",
-      daysLeft: 1,
-      backgroundColor: "secondary.50",
-    },
-  ];
+  const handleFilterClick = () => {
+    console.log("Filter clicked");
+  };
 
   return (
     <DashboardLayout>
       <Box>
-        <MilestoneTracker
-          onTabChange={handleTabChange}
-          onFilterClick={handleFilterClick}
-        />
+        {/* Header Section with Title, Tabs, and Filter */}
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          justify="space-between"
+          align={{ base: "stretch", md: "flex-end" }}
+          mb={6}
+          gap={4}
+          borderBottom="1px solid"
+          borderColor="state.200"
+          pb={0}
+        >
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            align={{ base: "stretch", md: "center" }}
+            gap={{ base: 4, md: 12 }}
+            flex={1}
+          >
+            {/* Title Row (Mobile: Title + Filter) */}
+            <Flex
+              justify="space-between"
+              align="center"
+              width={{ base: "100%", md: "auto" }}
+            >
+              <Text fontSize="24px" fontWeight={700} color="dark.950">
+                Milestone
+              </Text>
+
+              {/* Mobile Filter Button */}
+              <Flex
+                display={{ base: "flex", md: "none" }}
+                align="center"
+                gap={2}
+                px={4}
+                py={2}
+                border="1px solid"
+                borderColor="brand.600"
+                borderRadius="8px"
+                cursor="pointer"
+                onClick={handleFilterClick}
+              >
+                <Image src="/icons/funnel.svg" alt="Filter" w="16px" h="16px" />
+                <Text fontSize="14px" fontWeight={500} color="brand.600">
+                  Filter
+                </Text>
+              </Flex>
+            </Flex>
+
+            <Flex gap={8}>
+              <Box
+                cursor="pointer"
+                onClick={() => setActiveTab("Library")}
+                pb={4}
+                borderBottom="3px solid"
+                borderColor={
+                  activeTab === "Library" ? "brand.600" : "transparent"
+                }
+              >
+                <Text
+                  color={activeTab === "Library" ? "brand.600" : "state.500"}
+                  fontWeight={activeTab === "Library" ? 500 : 400}
+                >
+                  Milestone Library
+                </Text>
+              </Box>
+              <Box
+                cursor="pointer"
+                onClick={() => setActiveTab("Tracker")}
+                pb={4}
+                borderBottom="3px solid"
+                borderColor={
+                  activeTab === "Tracker" ? "brand.600" : "transparent"
+                }
+              >
+                <Text
+                  color={activeTab === "Tracker" ? "brand.600" : "state.500"}
+                  fontWeight={activeTab === "Tracker" ? 500 : 400}
+                >
+                  Milestone Tracker
+                </Text>
+              </Box>
+            </Flex>
+          </Flex>
+
+          {/* Desktop Filter Button */}
+          <Flex
+            display={{ base: "none", md: "flex" }}
+            align="center"
+            gap={2}
+            px={4}
+            py={2}
+            border="1px solid"
+            borderColor="brand.600"
+            borderRadius="8px"
+            cursor="pointer"
+            onClick={handleFilterClick}
+            mb={{ base: 2, md: 4 }}
+            alignSelf={{ base: "flex-end", md: "auto" }}
+          >
+            <Image src="/icons/funnel.svg" alt="Filter" w="16px" h="16px" />
+            <Text fontSize="14px" fontWeight={500} color="brand.600">
+              Filter
+            </Text>
+          </Flex>
+        </Flex>
 
         <MilestoneDatePicker
           onDateChange={handleDateChange}
           onViewChange={handleViewChange}
         />
 
-        {/* Main Content Grid */}
-        <Grid templateColumns={{ base: "1fr", lg: "1fr 350px" }} gap={6} mt={6}>
-          {/* Left Column - Milestone Cards and Lists */}
-          <Flex direction="column" gap={6}>
-            {/* Milestone Cards Grid */}
-            <Grid
-              templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-              gap={4}
-            >
-              {activeMilestones.map((milestone, index) => (
-                <MilestoneCard key={index} {...milestone} />
-              ))}
-            </Grid>
+        <Box mt={6}>
+          {activeTab === "Library" ? <MilestoneLibrary /> : <MilestoneTracker />}
+        </Box>
 
-            {/* Mobile: Pep Talk and Score Card - Show before Earned Milestones */}
-            <Flex
-              direction="column"
-              gap={6}
-              display={{ base: "flex", lg: "none" }}
-            >
-              <SimbiPepTalk />
-              <ScoreCard />
-            </Flex>
-
-            {/* Earned Milestones Section */}
-            <Box>
-              <Text fontSize="24px" fontWeight={600} color="dark.950" mb={4}>
-                Earned Milestones
-              </Text>
-              <Grid
-                templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                gap={4}
-              >
-                <MilestoneRewardCard
-                  icon="/trophy.svg"
-                  title="3 days Study Streak"
-                  description="3 consecutive days of study completed"
-                  tokens={10}
-                  progress="3/3 days"
-                  variant="earned"
-                />
-                <MilestoneRewardCard
-                  icon="/clock.svg"
-                  title="Time Master lvl 1"
-                  description="Shockingly... you did it!"
-                  tokens={15}
-                  progress="10 hours"
-                  variant="earned"
-                />
-              </Grid>
-            </Box>
-
-            {/* Upcoming Milestones Section */}
-            <Box>
-              <Text fontSize="24px" fontWeight={600} color="dark.950" mb={4}>
-                Upcoming Milestones
-              </Text>
-              <Grid
-                templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                gap={4}
-              >
-                <MilestoneRewardCard
-                  icon="/trophy.svg"
-                  title="7 days Study Streak"
-                  description="Complete 7 consecutive days of study"
-                  tokens={20}
-                  progress="5/7 days"
-                  variant="upcoming"
-                  tokenPrefix=""
-                />
-                <MilestoneRewardCard
-                  icon="/starred.svg"
-                  title="Pomodoro Session"
-                  description="Complete 5 sessions in one day"
-                  tokens={10}
-                  progress="3/5 done"
-                  variant="upcoming"
-                  tokenPrefix=""
-                />
-              </Grid>
-            </Box>
-          </Flex>
-
-          {/* Right Sidebar - Pep Talk and Score Card (Desktop only) */}
-          <Flex
-            direction="column"
-            gap={6}
-            display={{ base: "none", lg: "flex" }}
-          >
-            <SimbiPepTalk />
-            <ScoreCard />
-          </Flex>
-
-          {/* Chat Bubble */}
-          <Box
-            position="fixed"
-            bottom="40px"
-            right="40px"
-            zIndex={100}
-            cursor="pointer"
-            transition="transform 0.2s"
-            _hover={{ transform: "scale(1.1)" }}
-          >
-            <img
-              src="/chat-bubble.svg"
-              alt="Chat"
-              style={{ width: "120px", height: "120px" }}
-            />
-          </Box>
-        </Grid>
+        <ChatBubble />
       </Box>
     </DashboardLayout>
   );
