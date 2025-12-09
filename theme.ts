@@ -3,6 +3,10 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 const config = defineConfig({
   theme: {
     tokens: {
+      fonts: {
+        body: { value: "'Poppins', sans-serif" },
+        heading: { value: "'Poppins', sans-serif" },
+      },
       colors: {
         brand: {
           50: { value: "#F3F2FF" },

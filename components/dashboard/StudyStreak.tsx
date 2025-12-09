@@ -1,70 +1,181 @@
 "use client";
 
-import { Box, Flex, Text } from "@chakra-ui/react";
-import { Flame, MoreVertical } from "lucide-react";
-import { StudyStreakData } from "@/types/dashboard";
+import { Box, Text, Image } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import SimbiStreakOverlay from "./SimbiStreakOverlay";
+import {
+  getStudyPlans,
+  getStudySessions,
+  calculateStudyStreak,
+  getAllMilestones,
+  type StudySession,
+  type StudyStreakData,
+} from "@/lib/dashboard";
 
-interface StudyStreakProps {
-  data: StudyStreakData;
-}
+export default function StudyStreak() {
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [streakData, setStreakData] = useState<StudyStreakData>({
+    currentStreak: 0,
+    longestStreak: 0,
+    lastStudyDate: "",
+  });
+  const [weeklyMilestones, setWeeklyMilestones] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-export function StudyStreak({ data }: StudyStreakProps) {
+  useEffect(() => {
+    fetchStreakData();
+  }, []);
+
+  const fetchStreakData = async () => {
+    setIsLoading(true);
+    try {
+      const studyPlans = await getStudyPlans();
+      const allSessions: StudySession[] = [];
+
+      // Fetch sessions from all study plans
+      for (const plan of studyPlans) {
+        const sessions = await getStudySessions(plan.id);
+        allSessions.push(...sessions);
+      }
+
+      // Calculate streak
+      const streak = calculateStudyStreak(allSessions);
+      setStreakData(streak);
+
+      // Get weekly milestones
+      const milestones = await getAllMilestones();
+      const now = new Date();
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const weeklyCompleted = milestones.filter((m) => {
+        const dueDate = new Date(m.dueDate);
+        return m.completed && dueDate >= weekAgo && dueDate <= now;
+      }).length;
+      setWeeklyMilestones(weeklyCompleted);
+    } catch (error) {
+      console.error("Failed to fetch streak data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Determine Simbi's mood based on streak
+  const getSimbiMood = () => {
+    if (streakData.currentStreak >= 7) return "Ecstatic";
+    if (streakData.currentStreak >= 5) return "Happy";
+    if (streakData.currentStreak >= 3) return "Good";
+    if (streakData.currentStreak >= 1) return "Okay";
+    return "Sad";
+  };
+
   return (
     <Box>
-      <Flex justify="space-between" align="center" mb={6}>
-        <Text fontSize="18px" fontWeight="600" color="#1E1E2F">
-          Study Streak
-        </Text>
-      </Flex>
+      <Text fontSize="18px" fontWeight={600} color="#1e1e2f" mb="15px">
+        Study Streak
+      </Text>
 
-      <Flex gap="20px">
+      <Box display="flex" flexWrap="wrap" gap="20px">
         {/* Consecutive Days */}
         <Box
-          flex={1}
-          border="0.5px solid #D8DBDF"
+          flex="1"
+          minW="150px"
+          border="0.5px solid #d8dbdf"
           borderRadius="8px"
-          p={4}
+          p="16px"
+          cursor="pointer"
+          onClick={() => setIsOverlayOpen(true)}
+          _hover={{
+            borderColor: "#7a5fff",
+            boxShadow: "0 0 0 1px #7a5fff",
+          }}
+          transition="all 0.2s"
         >
-          <Text fontSize="14px" fontWeight="400" color="#5B616E" mb={3} lineHeight="13.45px">
+          <Text
+            fontSize="14px"
+            fontWeight={400}
+            color="#5b616e"
+            mb="13px"
+            lineHeight="13.45px"
+          >
             Consecutive Days
           </Text>
-          <Flex align="center" gap="5px">
-            <Text fontSize="16px" fontWeight="500" color="#000000" lineHeight="20.25px">
-              {data.consecutiveDays}
+          <Box display="flex" alignItems="center" gap="5px">
+            <Text
+              fontSize="16px"
+              fontWeight={500}
+              color="#000000"
+              lineHeight="20.25px"
+            >
+              {isLoading ? "..." : streakData.currentStreak}
             </Text>
-            <Flame size={20} color="#FF6B00" fill="#FF6B00" />
-          </Flex>
+            <Image src="/icons/fire.svg" alt="Fire" w="16px" h="20px" />
+          </Box>
         </Box>
 
         {/* Simbi's Mood */}
-        <Box flex={1} p={4}>
-          <Text fontSize="14px" fontWeight="400" color="#5B616E" mb={3} lineHeight="13.50px">
-            Simbi's Mood
+        <Box
+          flex="1"
+          border="0.5px solid #d8dbdf"
+          borderRadius="8px"
+          minW="150px"
+          p="16px"
+        >
+          <Text
+            fontSize="11px"
+            fontWeight={500}
+            color="#5b616e"
+            mb="13px"
+            lineHeight="13.50px"
+          >
+            Simbi&apos;s Mood
           </Text>
-          <Text fontSize="16px" fontWeight="500" color="#000000" lineHeight="20.25px">
-            {data.mood}
+          <Text
+            fontSize="16px"
+            fontWeight={500}
+            color="#000000"
+            lineHeight="20.25px"
+          >
+            {isLoading ? "..." : getSimbiMood()}
           </Text>
         </Box>
 
         {/* Weekly Goal */}
         <Box
-          flex={1}
-          border="0.5px solid #D8DBDF"
+          flex="1"
+          minW="150px"
+          border="0.5px solid #d8dbdf"
           borderRadius="8px"
-          p={4}
+          p="16px"
           position="relative"
         >
-          <Text fontSize="14px" fontWeight="400" color="#5B616E" mb={3} lineHeight="13.50px">
+          <Text
+            fontSize="14px"
+            fontWeight={400}
+            color="#5b616e"
+            mb="13px"
+            lineHeight="13.50px"
+          >
             Weekly goal
           </Text>
-          <Text fontSize="16px" fontWeight="500" color="#000000" lineHeight="20.25px">
-            {data.weeklyProgress} milestones
+          <Text
+            fontSize="16px"
+            fontWeight={500}
+            color="#000000"
+            lineHeight="20.25px"
+          >
+            {isLoading ? "..." : weeklyMilestones} milestones
           </Text>
-          <Box position="absolute" top={4} right={4}>
-            <MoreVertical size={18} color="#7A5FFF" />
+          <Box position="absolute" right="16px" top="16px" cursor="pointer">
+            <Image src="/icons/more.svg" alt="Dot" />
           </Box>
         </Box>
-      </Flex>
+      </Box>
+
+      {/* Simbi Streak Overlay */}
+      <SimbiStreakOverlay
+        isOpen={isOverlayOpen}
+        onClose={() => setIsOverlayOpen(false)}
+        consecutiveDays={streakData.currentStreak}
+      />
     </Box>
   );
 }

@@ -1,0 +1,15 @@
+<svg viewBox="0 0 12.8 12.8" x="0" y="0" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><filter id="filter0_d_1432_23213" x="-1.6000000000000014" y="-1.5996000000000095" width="16" height="16.0008" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB" xmlns="http://www.w3.org/2000/svg">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="1.6" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_1432_23213"/>
+<feOffset/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.2608 0 0 0 0 0.510133 0 0 0 0 0.8592 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1432_23213"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1432_23213" result="shape"/>
+</filter></defs><g id="Radio" xmlns="http://www.w3.org/2000/svg">
+<g id="radio_2" filter="url(#filter0_d_1432_23213)">
+<circle cx="6.399999999999999" cy="6.4003999999999905" r="6.4" fill="#FDFDFF"/>
+<circle cx="6.399999999999999" cy="6.4003999999999905" r="6" stroke="#7A5FFF" stroke-width="0.8"/>
+</g>
+<circle id="dot" cx="6.399999999999999" cy="6.399400000000014" r="3.2" fill="#7A5FFF"/>
+</g></svg>

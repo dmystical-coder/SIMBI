@@ -1,167 +1,222 @@
 "use client";
 
-import { Box, Flex, Stack, Text, Image } from "@chakra-ui/react";
-import { NavItem } from "@/types/dashboard";
+import { Box, Stack, Text, Image, IconButton } from "@chakra-ui/react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
+import { useAuth } from "@/contexts/AuthContext";
+
+interface NavItem {
+  label: string;
+  href: string;
+  icon: string;
+  showIndicator?: boolean;
+}
+
+const navItems: NavItem[] = [
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: "/icons/home.svg",
+    showIndicator: true,
+  },
+  {
+    label: "Study plans",
+    href: "/dashboard/study-plans",
+    icon: "/icons/category.svg",
+    showIndicator: true,
+  },
+  {
+    label: "Schedule",
+    href: "/dashboard/schedule",
+    icon: "/icons/schedule.svg",
+    showIndicator: true,
+  },
+  {
+    label: "Milestone",
+    href: "/dashboard/milestone",
+    icon: "/icons/milestone.svg",
+    showIndicator: true,
+  },
+  {
+    label: "Rewards",
+    href: "/dashboard/rewards",
+    icon: "/icons/rewards.svg",
+    showIndicator: true,
+  },
+  {
+    label: "Resources",
+    href: "/dashboard/resources",
+    icon: "/icons/book-open.svg",
+    showIndicator: true,
+  },
+  {
+    label: "Let's Chat",
+    href: "/dashboard/chat",
+    icon: "/icons/chat.svg",
+    showIndicator: true,
+  },
+];
 
 interface SidebarProps {
-  activeItem?: NavItem;
-  onNavigate?: (item: NavItem) => void;
   isOpen?: boolean;
   onClose?: () => void;
 }
 
-export function Sidebar({ activeItem = "dashboard", onNavigate, isOpen = true, onClose }: SidebarProps) {
-  const navItems = [
-    { id: "dashboard" as NavItem, label: "Dashboard", icon: "/icons/home.svg", active: true },
-    { id: "study-plans" as NavItem, label: "Study plans", icon: "/icons/study-plans.svg" },
-    { id: "schedule" as NavItem, label: "Schedule", icon: "/icons/schedule.svg" },
-    { id: "milestone" as NavItem, label: "Milestone", icon: "/icons/milestone-nav.svg" },
-    { id: "rewards" as NavItem, label: "Rewards", icon: "/icons/rewards-nav.svg" },
-    { id: "chat" as NavItem, label: "Let's Chat", icon: "/icons/chat-nav.svg" },
-    { id: "logout" as NavItem, label: "Log out", icon: "/icons/logout-nav.svg" },
-  ];
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { refreshAuth } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    refreshAuth();
+    router.push("/auth/sign-in");
+  };
 
   return (
-    <>
-      {/* Overlay for mobile */}
-      {isOpen && (
+    <Box
+      w={{ base: "274px", lg: "274px" }}
+      h="100vh"
+      bg="#1f125c"
+      position="fixed"
+      left={0}
+      top={0}
+      display={{ base: isOpen ? "flex" : "none", lg: "flex" }}
+      flexDirection="column"
+      p="36px 0"
+      overflowY="auto"
+      zIndex={1000}
+    >
+      {/* Close button for mobile */}
+      {onClose && (
         <Box
+          position="absolute"
+          top="25px"
+          right="27px"
           display={{ base: "block", lg: "none" }}
-          position="fixed"
-          inset={0}
-          bg="rgba(0,0,0,0.5)"
-          zIndex={998}
-          onClick={onClose}
-        />
-      )}
-      
-      <Flex
-        direction="column"
-        bg="#1F125C"
-        w={{ base: "274px", lg: "222px" }}
-        h="100vh"
-        position="fixed"
-        left={{ base: isOpen ? 0 : "-274px", lg: 0 }}
-        top={0}
-        gap={{ base: "30px", lg: "197px" }}
-        py={8}
-        zIndex={999}
-        transition="left 0.3s ease"
-      >
-        {/* Close button for mobile */}
-        <Flex justify="space-between" align="center" px={6} display={{ base: "flex", lg: "none" }}>
-          <Image src="/images/simbi-logo-text.svg" alt="SIMBI" w="149px" h="54px" />
-          <Image 
-            src="/icons/close.svg" 
-            alt="Close" 
-            w="12px" 
-            h="12px" 
-            cursor="pointer"
+        >
+          <IconButton
+            aria-label="Close sidebar"
             onClick={onClose}
-          />
-        </Flex>
-
-        {/* Logo Section - Desktop */}
-        <Box px={6} display={{ base: "none", lg: "block" }}>
-          <Image src="/images/simbi-logo-text.svg" alt="SIMBI" w="149px" h="54px" />
+            variant="ghost"
+            size="sm"
+            color="#fdfdff"
+            _hover={{ bg: "rgba(255, 255, 255, 0.1)" }}
+          >
+            <Image src="/icons/close.svg" alt="Close" w="32px" h="32px" />
+          </IconButton>
         </Box>
+      )}
 
-        {/* Navigation Items */}
-        <Stack gap="20px" px={6} flex={1}>
-          {navItems.map((item) => {
-            const isActive = activeItem === item.id;
-            
-            return (
-              <Flex
-                key={item.id}
-                align="center"
+      {/* Logo */}
+      <Box px="37px" mb="72px">
+        <Image
+          src="/images/simbi-logo-sidebar.svg"
+          alt="SIMBI"
+          w="149px"
+          h="54px"
+        />
+      </Box>
+
+      {/* Navigation */}
+      <Stack gap="32px" flex={1} px="40px">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              style={{ textDecoration: "none" }}
+            >
+              <Box
+                display="flex"
+                alignItems="center"
                 gap="20px"
                 cursor="pointer"
-                onClick={() => {
-                  onNavigate?.(item.id);
-                  onClose?.();
-                }}
                 _hover={{ opacity: 0.8 }}
-                transition="opacity 0.2s"
+                position="relative"
               >
-                <Box position="relative" w="20px" h="20px">
+                <Box
+                  w="24px"
+                  h="24px"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  flexShrink={0}
+                >
                   <Image
                     src={item.icon}
                     alt={item.label}
-                    w="20px"
-                    h="20px"
-                    filter={isActive ? "none" : "brightness(0) invert(1)"}
+                    w="100%"
+                    h="100%"
+                    style={{
+                      filter: isActive
+                        ? "brightness(0) saturate(100%) invert(86%) sepia(38%) saturate(1647%) hue-rotate(356deg) brightness(104%) contrast(101%)"
+                        : "brightness(0) saturate(100%) invert(100%)",
+                    }}
                   />
                 </Box>
                 <Text
                   fontSize="14px"
-                  fontWeight={isActive ? "600" : "500"}
-                  color={isActive ? "#FFD44D" : "#FDFDFF"}
+                  fontWeight={isActive ? 600 : 500}
+                  color={isActive ? "#ffd44d" : "#fdfdff"}
+                  fontFamily="Poppins, sans-serif"
                 >
                   {item.label}
                 </Text>
-                {isActive && item.active && (
+                {item.showIndicator && isActive && (
                   <Box
                     w="8px"
                     h="8px"
-                    borderRadius="full"
-                    bg="#FFD44D"
-                    ml="auto"
+                    borderRadius="50%"
+                    bg="#ffd44d"
+                    flexShrink={0}
                   />
                 )}
-              </Flex>
-            );
-          })}
-        </Stack>
+              </Box>
+            </Link>
+          );
+        })}
 
-        {/* Upgrade Section */}
-        <Flex direction="column" px={6} pb={8} gap={{ base: "35px", lg: "50px" }}>
-          {/* Simbi Character with bubble - Mobile only */}
-          <Box position="relative" display={{ base: "block", lg: "none" }}>
-            <Image 
-              src="/images/simbi-chat-bubble.svg" 
-              alt="Simbi" 
-              w="168px" 
-              h="169px"
-              mx="auto"
+        {/* Log out */}
+        <Box
+          display="flex"
+          alignItems="center"
+          gap="20px"
+          cursor="pointer"
+          _hover={{ opacity: 0.8 }}
+          mt="4px"
+          onClick={handleLogout}
+        >
+          <Box
+            w="24px"
+            h="24px"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            flexShrink={0}
+          >
+            <Image
+              src="/icons/logout.svg"
+              alt="Log out"
+              w="100%"
+              h="100%"
+              style={{
+                filter: "brightness(0) saturate(100%) invert(100%)",
+              }}
             />
           </Box>
-
-          <Box
-            bg="rgba(0, 0, 0, 0.10)"
-            borderRadius="18px"
-            p={4}
+          <Text
+            fontSize="14px"
+            fontWeight={500}
+            color="#fdfdff"
+            fontFamily="Poppins, sans-serif"
           >
-            <Text fontSize="14px" fontWeight="600" color="#FFD44D" mb={2}>
-              Upgrade your plan
-            </Text>
-            <Text fontSize="12px" fontWeight="400" color="#D2D0DE" mb={4}>
-              Connect Telegram bot, wallet, join study groups
-            </Text>
-            <Flex
-              bg="#7A5FFF"
-              borderRadius="8px"
-              py={2}
-              px={4}
-              justify="center"
-              cursor="pointer"
-              _hover={{ bg: "#6B4FE8" }}
-              transition="background 0.2s"
-            >
-              <Text fontSize="14px" fontWeight="600" color="#FFFFFF">
-                Sync Telegram
-              </Text>
-            </Flex>
-          </Box>
-          
-          {/* Simbi Character text - Desktop only */}
-          <Box mt={-4} textAlign="center" display={{ base: "none", lg: "block" }}>
-            <Text fontSize="8px" fontWeight="400" color="#FFFFFF" lineHeight="10px">
-              Keep studying, or I'm telling your brain you gave up.
-            </Text>
-          </Box>
-        </Flex>
-      </Flex>
-    </>
+            Log out
+          </Text>
+        </Box>
+      </Stack>
+    </Box>
   );
 }
