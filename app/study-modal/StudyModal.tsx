@@ -37,7 +37,11 @@ const formatDate = (dateStr: string) => {
   return `${day}${suffix} ${month}`;
 };
 
-export default function StudyModal() {
+interface StudyModalProps {
+  onPlanCreated?: () => void;
+}
+
+export default function StudyModal({ onPlanCreated }: StudyModalProps) {
   // ---------- STATE ----------
   const [subject, setSubject] = useState("");
   const [topics, setTopics] = useState("");
@@ -403,8 +407,11 @@ export default function StudyModal() {
                       <Button
                         bgColor="#7A5FFF"
                         borderRadius={12}
-                        onClick={() =>{handleSubmit
-                          router.push("/study-plans-filled")
+                        onClick={() => {
+                          handleSubmit();
+                          if (onPlanCreated) {
+                            onPlanCreated();
+                          }
                         }}
                       >
                         Generate Study Plan
