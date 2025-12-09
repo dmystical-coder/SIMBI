@@ -10,7 +10,6 @@ interface DateNavigatorProps {
   onViewChange?: (view: ViewType) => void;
   showViewToggle?: boolean;
   viewOptions?: { value: ViewType; label: string; icon: React.ReactNode }[];
-  dateFormat?: "full" | "short" | "range";
   showDatePicker?: boolean;
   customTitle?: string;
   showTodayButton?: boolean;
@@ -51,7 +50,6 @@ export default function DateNavigator({
       ),
     },
   ],
-  dateFormat = "full",
   showDatePicker = true,
   customTitle,
   showTodayButton = true,
