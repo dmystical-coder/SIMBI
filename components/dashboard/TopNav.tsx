@@ -5,6 +5,7 @@ import { Menu } from "@chakra-ui/react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import NotificationDrawer from "./NotificationDrawer";
 
 interface TopNavProps {
   onMenuClick?: () => void;
@@ -102,38 +103,20 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
         {/* Right Section: Notification and User Profile */}
         <Box display="flex" alignItems="center" gap="16px">
           {/* Notification Icon */}
-          <Box position="relative" cursor="pointer" w="26px" h="26px">
-            {/* Bell icon background */}
-            <Image
-              src="/icons/bell-outline.svg"
-              alt="Notifications"
-              w="20px"
-              h="19px"
-              position="absolute"
-              left="3px"
-              top="3.5px"
-            />
-            {/* Bell clapper */}
-            <Image
-              src="/icons/bell-clapper.svg"
-              alt=""
-              w="4px"
-              h="2px"
-              position="absolute"
-              left="11px"
-              top="23.5px"
-            />
-            {/* Red notification dot */}
-            <Box
-              w="10px"
-              h="10px"
-              bg="#ff0000"
-              borderRadius="50%"
-              position="absolute"
-              top="0"
-              right="0"
-            />
-          </Box>
+          <NotificationDrawer>
+            <Box position="relative" cursor="pointer" w="26px" h="26px">
+              <Image
+                src="/icons/bell.svg"
+                alt="Notifications"
+                w="24px"
+                h="24px"
+                position="absolute"
+                left="3px"
+                top="3.5px"
+              />
+
+            </Box>
+          </NotificationDrawer>
 
           {/* User Profile with Dropdown Menu */}
           <Menu.Root positioning={{ placement: "bottom-end", gutter: 8 }}>
