@@ -209,7 +209,6 @@ export default function SchedulePage() {
           onDateChange={handleDateChange}
           onViewChange={handleViewChange}
           showViewToggle={true}
-          dateFormat="short"
           showDatePicker={true}
           showTodayButton={true}
           step={
