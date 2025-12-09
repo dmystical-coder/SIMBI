@@ -18,7 +18,6 @@ export default function MilestoneDatePicker({
       onDateChange={onDateChange}
       onViewChange={onViewChange}
       showViewToggle={true}
-      dateFormat="full"
       showDatePicker={true}
       showTodayButton={true}
     />
