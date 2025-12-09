@@ -161,6 +161,7 @@ export default function DashboardPage() {
                       alt="Simbi Waving"
                       w={{ base: "94px", lg: "189px" }}
                       h={{ base: "150px", lg: "300px" }}
+                      display={{base:"block", lg:"none"}}
                       position="absolute"
                       right={{ base: 2, lg: 8 }}
                       bottom={0}
