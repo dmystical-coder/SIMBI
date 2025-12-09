@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Text, Grid } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 
 interface StudyBlock {
   id: string;
@@ -18,7 +18,6 @@ interface DailyScheduleViewProps {
 }
 
 export default function DailyScheduleView({
-  date,
   viewMode = "calendar",
   studyBlocks = [
     {
@@ -26,7 +25,7 @@ export default function DailyScheduleView({
       subject: "Chemistry",
       startTime: "09:00",
       duration: 60,
-      color: "#FFEAFA", // Pinkish
+      color: "#FFEAFA",
       textColor: "#C01048",
     },
     {
@@ -34,7 +33,7 @@ export default function DailyScheduleView({
       subject: "Biology",
       startTime: "11:00",
       duration: 60,
-      color: "#FFF9E6", // Yellowish
+      color: "#FFF9E6",
       textColor: "#B54708",
     },
     {
@@ -42,7 +41,7 @@ export default function DailyScheduleView({
       subject: "Physics",
       startTime: "13:00",
       duration: 60,
-      color: "#F4F3FF", // Light Purple/Blue
+      color: "#F4F3FF",
       textColor: "#5925DC",
     },
     {
@@ -50,7 +49,7 @@ export default function DailyScheduleView({
       subject: "Smart Money",
       startTime: "14:00",
       duration: 60,
-      color: "#F9FAFB", // Gray/White
+      color: "#F9FAFB",
       textColor: "#344054",
     },
     {
@@ -58,7 +57,7 @@ export default function DailyScheduleView({
       subject: "Mathematics",
       startTime: "15:00",
       duration: 60,
-      color: "#ECFDF3", // Greenish
+      color: "#ECFDF3",
       textColor: "#027A48",
     },
   ],
@@ -72,7 +71,7 @@ export default function DailyScheduleView({
   );
 
   const HOUR_HEIGHT = 64;
-  const TOP_OFFSET = 24; // Space at the top so the first label isn't cut off
+  const TOP_OFFSET = 24;
 
   // Helper to calculate position based on time
   const getPositionStyle = (time: string, duration: number) => {
@@ -166,7 +165,7 @@ export default function DailyScheduleView({
       border="1px solid"
       borderColor="state.200"
       overflow="hidden"
-      maxH="800px" // Fixed height with scroll for day view
+      maxH="800px"
       display="flex"
       flexDirection="column"
     >
@@ -174,7 +173,7 @@ export default function DailyScheduleView({
         overflowY="auto"
         flex={1}
         position="relative"
-        sx={{
+        css={{
           "&::-webkit-scrollbar": {
             width: "6px",
           },
@@ -189,7 +188,7 @@ export default function DailyScheduleView({
       >
         <Box
           position="relative"
-          minH={`${hours.length * HOUR_HEIGHT + TOP_OFFSET + 24}px`} // Add bottom padding space
+          minH={`${hours.length * HOUR_HEIGHT + TOP_OFFSET + 24}px`}
           py={0}
         >
           {/* Grid Lines and Time Labels */}
@@ -202,11 +201,10 @@ export default function DailyScheduleView({
               right={0}
               height={`${HOUR_HEIGHT}px`}
               align="flex-start"
-              borderBottom="1px solid" // This creates the line below the label? No, we want line AT the label usually
+              borderBottom="1px solid"
               borderColor="gray.50"
-              sx={{
-                // Optional: remove border for the last one if desired, but for time slots usually we want lines
-                borderBottom: "none", // Reset flex border
+              css={{
+                borderBottom: "none", 
               }}
             >
               <Box
@@ -225,8 +223,8 @@ export default function DailyScheduleView({
                 color="gray.400"
                 fontWeight="medium"
                 transform="translateY(-50%)"
-                position="relative" // Ensure z-index works if needed
-                bg="white" // background to cover line if needed, though usually label is to the left
+                position="relative" 
+                bg="white"
               >
                 {formatTime(hour)}
               </Text>
@@ -257,7 +255,7 @@ export default function DailyScheduleView({
                   display="flex"
                   flexDirection="column"
                   justifyContent="space-between"
-                  boxShadow="none" // Design appears flat/clean
+                  boxShadow="none"
                   zIndex={1}
                   _hover={{
                     zIndex: 10,
@@ -279,7 +277,6 @@ export default function DailyScheduleView({
               );
             })}
 
-            {/* Current Time Indicator (Visual aid) */}
             {/* We could add a line here for the current time if needed */}
           </Box>
         </Box>

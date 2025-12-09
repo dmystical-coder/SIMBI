@@ -1,7 +1,6 @@
 "use client";
 
-import { Box, Flex, Text, Image, Grid } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, Flex, Text, Grid } from "@chakra-ui/react";
 import MilestoneCard from "./MilestoneCard";
 import SimbiPepTalk from "./SimbiPepTalk";
 import ScoreCard from "./ScoreCard";

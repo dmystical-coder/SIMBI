@@ -1,6 +1,7 @@
 "use client";
 
 import { Box } from "@chakra-ui/react";
+import Image from "next/image";
 
 export default function ChatBubble() {
   return (
@@ -13,10 +14,11 @@ export default function ChatBubble() {
       transition="transform 0.2s"
       _hover={{ transform: "scale(1.1)" }}
     >
-      <img
+      <Image
         src="/chat-bubble.svg"
         alt="Chat"
-        style={{ width: "120px", height: "120px" }}
+        width={120}
+        height={120}
       />
     </Box>
   );
