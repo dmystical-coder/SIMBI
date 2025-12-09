@@ -2,7 +2,7 @@
 
 import { Box, Flex, Text, Image } from "@chakra-ui/react";
 import { Menu } from "@chakra-ui/react";
-import { Bell, ChevronDown, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { UserProfile } from "@/types/dashboard";
 
 interface UserDropdownProps {
@@ -15,7 +15,6 @@ interface UserDropdownProps {
 
 export function UserDropdown({ 
   user, 
-  notifications = 1,
   onUpgrade,
   onCustomize,
   onLogout 

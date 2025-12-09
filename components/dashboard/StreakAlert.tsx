@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import { Flex, Text, Image } from "@chakra-ui/react";
 import { Dialog } from "@chakra-ui/react";
 
 interface StreakAlertProps {
@@ -38,7 +38,7 @@ export function StreakAlert({ open, onClose, streakCount = 2 }: StreakAlertProps
             >
               STREAK MODE: ACTIVATED ⚡
               <br />
-              You've smashed {streakCount} plans in a row! I've notified the Study gods—they're impressed.
+              You&apos;ve smashed {streakCount} plans in a row! I&apos;ve notified the Study gods—they&apos;re impressed.
             </Text>
 
             {/* Character */}

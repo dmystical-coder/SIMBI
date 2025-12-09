@@ -12,7 +12,6 @@ import {
   Field,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 
 
@@ -52,8 +51,6 @@ export default function StudyModal({ onPlanCreated }: StudyModalProps) {
   const [dailyStudyTime, setDailyStudyTime] = useState("");
   const breakReference = studyDuration ? Math.round(studyDuration * 60 * 0.25) : 0;
 
-  const router = useRouter()
-
   // ---------- FORM SUBMIT ----------
   const handleSubmit = () => {
     const formData = {
@@ -92,6 +89,7 @@ export default function StudyModal({ onPlanCreated }: StudyModalProps) {
                     >
                       <Image
                         src="/study-plan.svg"
+                        alt="Study Plan Icon"
                         w="24px"
                         h="24px"
                         objectFit="contain"
@@ -102,7 +100,7 @@ export default function StudyModal({ onPlanCreated }: StudyModalProps) {
                         Generate a Study Plan
                       </Dialog.Title>
                       <Dialog.Description>
-                        Let's generate your study plan
+                        Let&apos;s generate your study plan
                       </Dialog.Description>
                     </Box>
                   </Flex>
@@ -377,11 +375,12 @@ export default function StudyModal({ onPlanCreated }: StudyModalProps) {
                     <Flex gap={0.5} align="center" order={{ base: 2, lg: 1 }}>
                       <Image
                         src="/chat-simbi.svg"
+                        alt="Simbi Chat"
                         w="120px"
                         h="44px"
                         objectFit="contain"
                       />
-                      <Image src="/chat.svg" w="60px" h="48px" objectFit="contain" />
+                      <Image src="/chat.svg" alt="Chat Bubble" w="60px" h="48px" objectFit="contain" />
                     </Flex>
 
                     <Flex gap={{ base: 2, lg: 4 }} order={{ base: 1, lg: 2 }}>

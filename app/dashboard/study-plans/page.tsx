@@ -230,6 +230,7 @@ export default function StudyPlansPage() {
             <Image
               boxSize={{ base: "200px", lg: "320px" }}
               src={"/simbi-sad.png"}
+              alt="No study plans"
               objectFit="contain"
             />
 

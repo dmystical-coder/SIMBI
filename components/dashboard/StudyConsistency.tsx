@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, Image } from "@chakra-ui/react";
 import { ConsistencyData, TimeFilter } from "@/types/dashboard";
 
 interface StudyConsistencyProps {
